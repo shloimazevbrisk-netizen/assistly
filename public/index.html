@@ -542,12 +542,12 @@
   </div>
 
   <script>
-    const API_BASE = "http://localhost:3001";
+    const API_BASE = "https://assistly-backend-hw4j.onrender.com";
 
 function getEmbedCode() {
   const companyId = localStorage.getItem("companyId");
 
-  const code = `<scr` + `ipt src="http://localhost:3001/widget.js" data-company="${companyId}"></scr` + `ipt>`;
+  const code = `<script src="https://assistly-backend-hw4j.onrender.com/widget.js" data-company="${companyId}"></script>`;
 
   const box = document.createElement("div");
   box.style.position = "fixed";
