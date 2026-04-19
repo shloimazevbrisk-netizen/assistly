@@ -477,18 +477,24 @@ for (let s of scripts) {
   }
 }
 
+let conversationId = window.assistlyConversationId || null;
+
 fetch("https://assistlychat.com/chat", {
   method: "POST",
   headers: {
     "Content-Type": "application/json"
   },
   body: JSON.stringify({
-    message: msg,
-    companyId: companyId
-  })
+  message: msg,
+  companyId: companyId,
+  conversationId: conversationId
+})
 })
 .then(res => res.json())
 .then(data => {
+if (data.conversationId) {
+  window.assistlyConversationId = data.conversationId;
+}
   const reply = document.createElement("div");
   reply.innerText = data.reply || data.message;
   reply.style.padding = "8px";
