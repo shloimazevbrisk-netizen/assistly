@@ -433,7 +433,16 @@ app.get("/widget.js", (req, res) => {
   chatBox.style.overflow = "hidden";
   chatBox.style.zIndex = "9999";
 
-  chatBox.innerHTML = '<div style="background:#4f46e5;color:white;padding:10px;font-weight:bold;">Assistly</div><div style="flex:1;padding:10px;font-size:14px;">Hi 👋 How can I help?</div><input id="assistly-input" placeholder="Type a message..." style="border:none;border-top:1px solid #eee;padding:10px;outline:none;" />';
+ chatBox.innerHTML = `
+  <div style="background:#4f46e5;color:white;padding:10px;font-weight:bold;">
+    Assistly
+  </div>
+
+  <div id="assistly-messages" style="flex:1;overflow-y:auto;padding:10px;font-size:14px;"></div>
+
+  <input id="assistly-input" placeholder="Type a message..."
+    style="border:none;border-top:1px solid #eee;padding:10px;outline:none;" />
+`;
 
   button.onclick = () => {
     chatBox.style.display =
@@ -455,7 +464,9 @@ message.style.margin = "5px";
 message.style.background = "#eee";
 message.style.borderRadius = "8px";
 
-chatBox.appendChild(message);
+const messagesDiv = chatBox.querySelector("#assistly-messages");
+messagesDiv.appendChild(message);
+messagesDiv.scrollTop = messagesDiv.scrollHeight;
 
 input.value = "";
 
@@ -490,7 +501,9 @@ fetch("https://assistlychat.com/chat", {
   reply.style.color = "white";
   reply.style.borderRadius = "8px";
 
-  chatBox.appendChild(reply);
+  const messagesDiv = chatBox.querySelector("#assistly-messages");
+messagesDiv.appendChild(reply);
+messagesDiv.scrollTop = messagesDiv.scrollHeight;
 });
 
   }
