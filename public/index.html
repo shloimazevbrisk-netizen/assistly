@@ -713,12 +713,27 @@ function getEmbedCode() {
         }
 
         if (msg.reply) {
-          chat.innerHTML += `
-            <div class="message-row bot-row">
-              <div class="bubble bot-bubble">${escapeHtml(msg.reply)}</div>
-            </div>
-          `;
-        }
+  chat.innerHTML += `
+    <div class="message-row bot-row">
+      <div>
+        <div class="bubble bot-bubble">${escapeHtml(msg.reply)}</div>
+
+        <button onclick="improveAI('${escapeHtml(msg.reply)}')" style="
+          margin-top:5px;
+          font-size:12px;
+          background:#eee;
+          border:none;
+          padding:5px 8px;
+          border-radius:6px;
+          cursor:pointer;
+        ">
+          Improve AI
+        </button>
+
+      </div>
+    </div>
+  `;
+}
       });
 
       chat.scrollTop = chat.scrollHeight;
@@ -729,6 +744,13 @@ function getEmbedCode() {
       div.textContent = text || "";
       return div.innerHTML;
     }
+
+function improveAI(reply) {
+  const better = prompt("How should the AI answer next time?", reply);
+  if (!better) return;
+
+  alert("Saved (next we connect to backend)");
+}
 
     async function loadConversations() {
       const companyId = getCompanyId();
@@ -822,10 +844,25 @@ function getEmbedCode() {
       const data = await response.json();
 
       chat.innerHTML += `
-        <div class="message-row bot-row">
-          <div class="bubble bot-bubble">${escapeHtml(data.reply || "No reply")}</div>
-        </div>
-      `;
+  <div class="message-row bot-row">
+    <div>
+      <div class="bubble bot-bubble">${escapeHtml(data.reply || "No reply")}</div>
+
+      <button onclick="improveAI(${JSON.stringify(data.reply || "")})" style="
+        margin-top:5px;
+        font-size:12px;
+        background:#eee;
+        border:none;
+        padding:5px 8px;
+        border-radius:6px;
+        cursor:pointer;
+      ">
+        Improve AI
+      </button>
+
+    </div>
+  </div>
+`;
       chat.scrollTop = chat.scrollHeight;
 
       document.getElementById("chatTitle").textContent = localStorage.getItem("selectedLeadEmail") || "Current Chat";
