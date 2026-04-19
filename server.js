@@ -433,16 +433,7 @@ app.get("/widget.js", (req, res) => {
   chatBox.style.overflow = "hidden";
   chatBox.style.zIndex = "9999";
 
-  chatBox.innerHTML = \`
-    <div style="background:#4f46e5;color:white;padding:10px;font-weight:bold;">
-      Assistly
-    </div>
-    <div style="flex:1;padding:10px;font-size:14px;">
-      Hi 👋 How can I help?
-    </div>
-    <input placeholder="Type a message..."
-      style="border:none;border-top:1px solid #eee;padding:10px;outline:none;" />
-  \`;
+  chatBox.innerHTML = '<div style="background:#4f46e5;color:white;padding:10px;font-weight:bold;">Assistly</div><div style="flex:1;padding:10px;font-size:14px;">Hi 👋 How can I help?</div><input placeholder="Type a message..." style="border:none;border-top:1px solid #eee;padding:10px;outline:none;" />';
 
   button.onclick = () => {
     chatBox.style.display =
