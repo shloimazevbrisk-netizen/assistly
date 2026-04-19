@@ -1,0 +1,83 @@
+[
+  {
+    "id": "1776387269366",
+    "companyId": "test123",
+    "conversationId": "1776387267473",
+    "message": "hi",
+    "reply": "I'm here to help with questions about our company and services. How can I assist you today?",
+    "email": null,
+    "time": "2026-04-17T00:54:29.366Z"
+  },
+  {
+    "id": "1776387279449",
+    "companyId": "test123",
+    "conversationId": "1776387267473",
+    "message": "what do you do ?",
+    "reply": "We provide solutions to streamline processes and optimize team performance through services such as One-On-One Coaching, the Ascendancy Program, and workshops and events. Our goal is to help businesses grow, tackle new challenges, and drive organizational success. If you're interested in learning more or joining our community, please provide your name and email.",
+    "email": null,
+    "time": "2026-04-17T00:54:39.449Z"
+  },
+  {
+    "id": "1776387293166",
+    "companyId": "test123",
+    "conversationId": "1776387267473",
+    "message": "who is trump?",
+    "reply": "I'm here to help with questions about our company and services.",
+    "email": null,
+    "time": "2026-04-17T00:54:53.166Z"
+  },
+  {
+    "id": "1776387340187",
+    "companyId": "test123",
+    "conversationId": "1776387267473",
+    "message": "okay my name is shloima zev brisk email is shloimazevbrisk@gmail.com",
+    "reply": "Thank you, Shloima! How can I assist you further regarding our services?",
+    "email": "shloimazevbrisk@gmail.com",
+    "time": "2026-04-17T00:55:40.187Z"
+  },
+  {
+    "id": "1776388097496",
+    "companyId": "test123",
+    "conversationId": "1776387267473",
+    "message": "hi",
+    "reply": "I'm here to help with questions about our company and services. How can I assist you today?",
+    "email": null,
+    "time": "2026-04-17T01:08:17.496Z"
+  },
+  {
+    "id": "1776549210340",
+    "companyId": "test123",
+    "conversationId": "1776387267473",
+    "message": "why not ?",
+    "reply": "I'm here to help with questions about our company and services.",
+    "email": null,
+    "time": "2026-04-18T21:53:30.341Z"
+  },
+  {
+    "id": "1776549245389",
+    "companyId": "test123",
+    "conversationId": "1776387267473",
+    "message": "how many coaches do you have ?",
+    "reply": "We have a diverse team of experienced coaches, each with unique backgrounds and expertise. Their specific areas of focus include individual coaching, leadership development, and business strategy. If you're interested in learning more about our coaching services or connecting with a specific coach, please let me know!",
+    "email": null,
+    "time": "2026-04-18T21:54:05.389Z"
+  },
+  {
+    "id": "1776549284210",
+    "companyId": "test123",
+    "conversationId": "1776387267473",
+    "message": "who whould be the best coach for me ?",
+    "reply": "To determine the best coach for you, it would depend on your specific needs and goals. We have a variety of coaches with different specialties:\n\n- Aron Kaufman focuses on individual success and business insights.\n- Sol Katz emphasizes self-development and leadership skills.\n- Shmuel Moskowitz offers expertise in business management and team collaboration.\n- Ricky Rosenberg promotes positive change through empowerment.\n- Shulem Berkowitz combines business strategy with psychological and spiritual insights.\n\nIf you provide your email, I can send more tailored information based on your needs.",
+    "email": null,
+    "time": "2026-04-18T21:54:44.210Z"
+  },
+  {
+    "id": "1776549343603",
+    "companyId": "test123",
+    "conversationId": "1776387267473",
+    "message": "got it thanks",
+    "reply": "I'm here to help with questions about our company and services.",
+    "email": null,
+    "time": "2026-04-18T21:55:43.603Z"
+  }
+]

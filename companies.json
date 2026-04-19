@@ -1,0 +1,14 @@
+[
+  {
+    "companyId": "test123",
+    "companyName": "test123",
+    "passwordHash": "$2b$10$x532XuTe6j9L9zko4xEeaOcKxfnaCvVTGV3cGeOnEtM2XPN3GvChy",
+    "createdAt": "2026-04-17T00:51:12.589Z"
+  },
+  {
+    "companyId": "rock-leadership-solutions",
+    "companyName": "rock leadership solutions",
+    "passwordHash": "$2b$10$598WbchQberepgZLp6Xfl.NfY5fYW0gnYSVGta81PNkO26gzQzkfO",
+    "createdAt": "2026-04-18T21:37:23.893Z"
+  }
+]
