@@ -445,18 +445,47 @@ const input = chatBox.querySelector("#assistly-input");
 input.addEventListener("keypress", function (e) {
   if (e.key === "Enter") {
     const msg = input.value;
-    if (!msg) return;
+if (!msg) return;
 
-    const message = document.createElement("div");
-    message.innerText = msg;
-    message.style.padding = "8px";
-    message.style.margin = "5px";
-    message.style.background = "#eee";
-    message.style.borderRadius = "8px";
+// show user message
+const message = document.createElement("div");
+message.innerText = msg;
+message.style.padding = "8px";
+message.style.margin = "5px";
+message.style.background = "#eee";
+message.style.borderRadius = "8px";
 
-    chatBox.appendChild(message);
+chatBox.appendChild(message);
 
-    input.value = "";
+input.value = "";
+
+// send to backend
+const scriptTag = document.currentScript;
+const companyId = scriptTag.getAttribute("data-company");
+
+fetch("https://assistlychat.com/chat", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    message: msg,
+    companyId: companyId
+  })
+})
+.then(res => res.json())
+.then(data => {
+  const reply = document.createElement("div");
+  reply.innerText = data.reply || data.message;
+  reply.style.padding = "8px";
+  reply.style.margin = "5px";
+  reply.style.background = "#4f46e5";
+  reply.style.color = "white";
+  reply.style.borderRadius = "8px";
+
+  chatBox.appendChild(reply);
+});
+
   }
 });
 
