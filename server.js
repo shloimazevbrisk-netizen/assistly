@@ -453,6 +453,7 @@ app.get("/widget.js", (req, res) => {
   document.body.appendChild(chatBox);
 })();
 `);
+});
 
 const PORT = process.env.PORT || 3001;
 
