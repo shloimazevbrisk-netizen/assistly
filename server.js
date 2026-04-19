@@ -460,8 +460,15 @@ chatBox.appendChild(message);
 input.value = "";
 
 // send to backend
-const scriptTag = document.currentScript;
-const companyId = scriptTag.getAttribute("data-company");
+let companyId = "rockleadership-solutions"; // fallback
+
+const scripts = document.getElementsByTagName("script");
+
+for (let s of scripts) {
+  if (s.src.includes("widget.js") && s.getAttribute("data-company")) {
+    companyId = s.getAttribute("data-company");
+  }
+}
 
 fetch("https://assistlychat.com/chat", {
   method: "POST",
