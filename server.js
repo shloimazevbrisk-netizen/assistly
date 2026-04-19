@@ -400,22 +400,59 @@ app.get("/widget.js", (req, res) => {
   res.setHeader("Content-Type", "application/javascript");
 
   res.send(`
-    (function () {
-      const chat = document.createElement("div");
-      chat.innerHTML = "Assistly Chat";
-      chat.style.position = "fixed";
-      chat.style.bottom = "20px";
-      chat.style.right = "20px";
-      chat.style.background = "#4f46e5";
-      chat.style.color = "white";
-      chat.style.padding = "12px 16px";
-      chat.style.borderRadius = "12px";
-      chat.style.cursor = "pointer";
-      chat.style.zIndex = "9999";
-      document.body.appendChild(chat);
-    })();
-  `);
-});
+(function () {
+  const button = document.createElement("div");
+  button.innerHTML = "💬";
+  button.style.position = "fixed";
+  button.style.bottom = "20px";
+  button.style.right = "20px";
+  button.style.width = "60px";
+  button.style.height = "60px";
+  button.style.background = "#4f46e5";
+  button.style.color = "white";
+  button.style.borderRadius = "50%";
+  button.style.display = "flex";
+  button.style.alignItems = "center";
+  button.style.justifyContent = "center";
+  button.style.fontSize = "24px";
+  button.style.cursor = "pointer";
+  button.style.boxShadow = "0 4px 12px rgba(0,0,0,0.2)";
+  button.style.zIndex = "9999";
+
+  const chatBox = document.createElement("div");
+  chatBox.style.position = "fixed";
+  chatBox.style.bottom = "90px";
+  chatBox.style.right = "20px";
+  chatBox.style.width = "300px";
+  chatBox.style.height = "400px";
+  chatBox.style.background = "white";
+  chatBox.style.borderRadius = "12px";
+  chatBox.style.boxShadow = "0 10px 30px rgba(0,0,0,0.2)";
+  chatBox.style.display = "none";
+  chatBox.style.flexDirection = "column";
+  chatBox.style.overflow = "hidden";
+  chatBox.style.zIndex = "9999";
+
+  chatBox.innerHTML = \`
+    <div style="background:#4f46e5;color:white;padding:10px;font-weight:bold;">
+      Assistly
+    </div>
+    <div style="flex:1;padding:10px;font-size:14px;">
+      Hi 👋 How can I help?
+    </div>
+    <input placeholder="Type a message..."
+      style="border:none;border-top:1px solid #eee;padding:10px;outline:none;" />
+  \`;
+
+  button.onclick = () => {
+    chatBox.style.display =
+      chatBox.style.display === "none" ? "flex" : "none";
+  };
+
+  document.body.appendChild(button);
+  document.body.appendChild(chatBox);
+})();
+`);
 
 const PORT = process.env.PORT || 3001;
 
