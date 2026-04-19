@@ -440,6 +440,26 @@ app.get("/widget.js", (req, res) => {
       chatBox.style.display === "none" ? "flex" : "none";
   };
 
+const input = chatBox.querySelector("#assistly-input");
+
+input.addEventListener("keypress", function (e) {
+  if (e.key === "Enter") {
+    const msg = input.value;
+    if (!msg) return;
+
+    const message = document.createElement("div");
+    message.innerText = msg;
+    message.style.padding = "8px";
+    message.style.margin = "5px";
+    message.style.background = "#eee";
+    message.style.borderRadius = "8px";
+
+    chatBox.appendChild(message);
+
+    input.value = "";
+  }
+});
+
   document.body.appendChild(button);
   document.body.appendChild(chatBox);
 })();
