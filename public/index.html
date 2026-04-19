@@ -256,12 +256,12 @@
     }
 
     .message-row.user-row {
-      justify-content: flex-end;
-    }
+  justify-content: flex-start;
+}
 
-    .message-row.bot-row {
-      justify-content: flex-start;
-    }
+.message-row.bot-row {
+  justify-content: flex-end;
+}
 
     .bubble {
       max-width: 72%;
@@ -274,17 +274,17 @@
     }
 
     .user-bubble {
-      background: linear-gradient(90deg, #4f46e5, #6366f1);
-      color: white;
-      border-bottom-right-radius: 6px;
-    }
+  background: white;
+  color: #111827;
+  border: 1px solid #e5e7eb;
+  border-bottom-left-radius: 6px;
+}
 
-    .bot-bubble {
-      background: white;
-      color: #111827;
-      border: 1px solid #e5e7eb;
-      border-bottom-left-radius: 6px;
-    }
+.bot-bubble {
+  background: linear-gradient(90deg, #4f46e5, #6366f1);
+  color: white;
+  border-bottom-right-radius: 6px;
+}
 
     .input-bar {
       background: white;
