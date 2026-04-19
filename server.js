@@ -396,6 +396,27 @@ app.post("/save-website", async (req, res) => {
   }
 });
 
+app.get("/widget.js", (req, res) => {
+  res.setHeader("Content-Type", "application/javascript");
+
+  res.send(`
+    (function () {
+      const chat = document.createElement("div");
+      chat.innerHTML = "Assistly Chat";
+      chat.style.position = "fixed";
+      chat.style.bottom = "20px";
+      chat.style.right = "20px";
+      chat.style.background = "#4f46e5";
+      chat.style.color = "white";
+      chat.style.padding = "12px 16px";
+      chat.style.borderRadius = "12px";
+      chat.style.cursor = "pointer";
+      chat.style.zIndex = "9999";
+      document.body.appendChild(chat);
+    })();
+  `);
+});
+
 const PORT = process.env.PORT || 3001;
 
 app.listen(PORT, "0.0.0.0", () => {
