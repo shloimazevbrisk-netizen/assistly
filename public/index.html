@@ -718,17 +718,18 @@ function getEmbedCode() {
       <div>
         <div class="bubble bot-bubble">${escapeHtml(msg.reply)}</div>
 
-        <button onclick="improveAI('${escapeHtml(msg.reply)}')" style="
-          margin-top:5px;
-          font-size:12px;
-          background:#eee;
-          border:none;
-          padding:5px 8px;
-          border-radius:6px;
-          cursor:pointer;
-        ">
-          Improve AI
-        </button>
+
+  <button class="improve-btn" data-reply="${encodeURIComponent(msg.reply)}" style="
+  margin-top:5px;
+  font-size:12px;
+  background:#eee;
+  border:none;
+  padding:5px 8px;
+  border-radius:6px;
+  cursor:pointer;
+">
+  Improve AI
+</button>
 
       </div>
     </div>
@@ -745,11 +746,25 @@ function getEmbedCode() {
       return div.innerHTML;
     }
 
-function improveAI(reply) {
+async function improveAI(reply) {
   const better = prompt("How should the AI answer next time?", reply);
   if (!better) return;
 
-  alert("Saved (next we connect to backend)");
+  const companyId = localStorage.getItem("companyId");
+
+  await fetch(`${API_BASE}/improve-ai`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      original: reply,
+      improved: better,
+      companyId
+    })
+  });
+
+  alert("Saved ✅");
 }
 
     async function loadConversations() {
@@ -848,17 +863,17 @@ function improveAI(reply) {
     <div>
       <div class="bubble bot-bubble">${escapeHtml(data.reply || "No reply")}</div>
 
-      <button onclick="improveAI(${JSON.stringify(data.reply || "")})" style="
-        margin-top:5px;
-        font-size:12px;
-        background:#eee;
-        border:none;
-        padding:5px 8px;
-        border-radius:6px;
-        cursor:pointer;
-      ">
-        Improve AI
-      </button>
+      <button class="improve-btn" data-reply='${escapeHtml(data.reply || "")}' style="
+  margin-top:5px;
+  font-size:12px;
+  background:#eee;
+  border:none;
+  padding:5px 8px;
+  border-radius:6px;
+  cursor:pointer;
+">
+  Improve AI
+</button>
 
     </div>
   </div>
@@ -870,6 +885,13 @@ function improveAI(reply) {
 
       loadConversations();
     }
+
+document.addEventListener("click", function (e) {
+  if (e.target.classList.contains("improve-btn")) {
+    const reply = decodeURIComponent(e.target.getAttribute("data-reply"));
+improveAI(reply);
+  }
+});
 
     async function openLeads() {
       const companyId = getCompanyId();

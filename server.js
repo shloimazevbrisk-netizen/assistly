@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 const express = require("express");
 const path = require("path");
 const cors = require("cors");
@@ -35,6 +37,9 @@ const LEADS_FILE = path.join(DATA_DIR, "leads.json");
 const CONVERSATIONS_FILE = path.join(DATA_DIR, "conversations.json");
 const COMPANY_DATA_FILE = path.join(DATA_DIR, "company-data.json");
 
+const AI_FIXES_FILE = path.join(DATA_DIR, "ai-fixes.json");
+ensureFile(AI_FIXES_FILE, []);
+
 function ensureFile(filePath, defaultValue) {
   if (!fs.existsSync(filePath)) {
     fs.writeFileSync(filePath, JSON.stringify(defaultValue, null, 2));
@@ -56,6 +61,22 @@ function readJson(filePath, fallback) {
 
 function writeJson(filePath, data) {
   fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
+}
+
+function getAIFixes(companyId) {
+  const all = readJson(AI_FIXES_FILE, []);
+  return all.filter(f => f.companyId === companyId);
+}
+
+function saveAIFix(companyId, original, improved) {
+  const all = readJson(AI_FIXES_FILE, []);
+  all.push({
+    id: Date.now().toString(),
+    companyId,
+    original,
+    improved
+  });
+  writeJson(AI_FIXES_FILE, all);
 }
 
 function slugifyCompanyName(name) {
@@ -143,6 +164,8 @@ app.post("/chat", async (req, res) => {
   }
 
   const companyData = getCompanyKnowledge(companyId);
+const fixes = getAIFixes(companyId);
+const foundFix = fixes.find(f => message.toLowerCase().includes(f.original.toLowerCase()));
   const emailMatch = message.match(/[^\s]+@[^\s]+\.[^\s]+/);
 
   let name = "Unknown";
@@ -153,6 +176,13 @@ app.post("/chat", async (req, res) => {
   } else if (emailMatch) {
     name = message.trim().split(/\s+/)[0];
   }
+
+if (foundFix) {
+  return res.json({
+    reply: foundFix.improved,
+    conversationId: conversationId || Date.now().toString()
+  });
+}
 
   try {
     const response = await openai.chat.completions.create({
@@ -394,6 +424,18 @@ app.post("/save-website", async (req, res) => {
     console.error(err);
     res.status(500).json({ message: "Error reading website" });
   }
+});
+
+app.post("/improve-ai", (req, res) => {
+  const { original, improved, companyId } = req.body;
+
+  if (!original || !improved || !companyId) {
+    return res.status(400).json({ message: "Missing data" });
+  }
+
+  saveAIFix(companyId, original, improved);
+
+  res.json({ success: true });
 });
 
 app.get("/widget.js", (req, res) => {
