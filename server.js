@@ -172,7 +172,8 @@ const normalize = (text) =>
 const normalizedMessage = normalize(message);
 
 const foundFix = fixes.find(f =>
-  normalizedMessage.includes(normalize(f.original))
+  normalize(message).includes(normalize(f.original)) ||
+  normalize(f.original).includes(normalize(message))
 );
 
   const emailMatch = message.match(/[^\s]+@[^\s]+\.[^\s]+/);
