@@ -822,8 +822,9 @@ async function improveAI(reply, buttonElement) {
       headers: {
         "Content-Type": "application/json"
       },
+
       body: JSON.stringify({
-        original: reply,
+        original: window.lastUserMessage,
         improved: better,
         companyId
       })
@@ -895,6 +896,8 @@ async function improveAI(reply, buttonElement) {
       const input = document.getElementById("input");
       const message = input.value.trim();
       if (!message) return;
+
+     window.lastUserMessage = message;
 
       const companyId = getCompanyId();
       if (!companyId) {
