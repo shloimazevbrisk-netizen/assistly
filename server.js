@@ -436,6 +436,8 @@ app.post("/save-website", async (req, res) => {
 });
 
 app.post("/improve-ai", (req, res) => {
+  console.log("IMPROVE AI HIT:", req.body);
+
   const { original, improved, companyId } = req.body;
 
   if (!original || !improved || !companyId) {
