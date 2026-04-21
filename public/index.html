@@ -719,7 +719,10 @@ function getEmbedCode() {
         <div class="bubble bot-bubble">${escapeHtml(msg.reply)}</div>
 
 
-  <button class="improve-btn" data-reply="${encodeURIComponent(msg.reply)}" style="
+  <button class="improve-btn" 
+data-reply="${encodeURIComponent(msg.reply)}"
+data-message="${encodeURIComponent(msg.message)}"
+style="
   margin-top:5px;
   font-size:12px;
   background:#eee;
@@ -746,7 +749,7 @@ function getEmbedCode() {
       return div.innerHTML;
     }
 
-async function improveAI(reply, buttonElement) {
+async function improveAI(reply, message, buttonElement) {
   const oldBox = document.getElementById("improve-ai-box");
   if (oldBox) oldBox.remove();
 
@@ -824,7 +827,7 @@ async function improveAI(reply, buttonElement) {
       },
 
       body: JSON.stringify({
-        original: window.lastUserMessage,
+        original: message,
         improved: better,
         companyId
       })
@@ -941,7 +944,10 @@ async function improveAI(reply, buttonElement) {
     <div>
       <div class="bubble bot-bubble">${escapeHtml(data.reply || "No reply")}</div>
 
-      <button class="improve-btn" data-reply='${escapeHtml(data.reply || "")}' style="
+      <button class="improve-btn" 
+data-reply="${encodeURIComponent(data.reply || "")}"
+data-message="${encodeURIComponent(message)}"
+style="
   margin-top:5px;
   font-size:12px;
   background:#eee;
@@ -967,7 +973,8 @@ async function improveAI(reply, buttonElement) {
 document.addEventListener("click", function (e) {
   if (e.target.classList.contains("improve-btn")) {
     const reply = decodeURIComponent(e.target.getAttribute("data-reply"));
-    improveAI(reply, e.target);
+const message = decodeURIComponent(e.target.getAttribute("data-message"));
+improveAI(reply, message, e.target);
   }
 });
 
