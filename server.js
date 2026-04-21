@@ -165,7 +165,16 @@ app.post("/chat", async (req, res) => {
 
   const companyData = getCompanyKnowledge(companyId);
 const fixes = getAIFixes(companyId);
-const foundFix = fixes.find(f => message.toLowerCase().includes(f.original.toLowerCase()));
+
+const normalize = (text) =>
+  text.toLowerCase().replace(/[^\w\s]/gi, "").trim();
+
+const normalizedMessage = normalize(message);
+
+const foundFix = fixes.find(f =>
+  normalizedMessage.includes(normalize(f.original))
+);
+
   const emailMatch = message.match(/[^\s]+@[^\s]+\.[^\s]+/);
 
   let name = "Unknown";
