@@ -746,26 +746,101 @@ function getEmbedCode() {
       return div.innerHTML;
     }
 
-async function improveAI(reply) {
-  const better = prompt("How should the AI answer next time?", reply);
-  if (!better) return;
+async function improveAI(reply, buttonElement) {
+  const oldBox = document.getElementById("improve-ai-box");
+  if (oldBox) oldBox.remove();
 
-  const companyId = localStorage.getItem("companyId");
+  const box = document.createElement("div");
+  box.id = "improve-ai-box";
+  box.style.marginTop = "10px";
+  box.style.background = "#ffffff";
+  box.style.border = "1px solid #e5e7eb";
+  box.style.borderRadius = "12px";
+  box.style.padding = "12px";
+  box.style.boxShadow = "0 6px 18px rgba(0,0,0,0.08)";
+  box.style.maxWidth = "420px";
 
-  await fetch(`${API_BASE}/improve-ai`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      original: reply,
-      improved: better,
-      companyId
-    })
-  });
+  box.innerHTML = `
+    <div style="font-size:13px; font-weight:600; margin-bottom:8px; color:#111827;">
+      Improve AI answer
+    </div>
 
-  alert("Saved ✅");
+    <textarea id="improveAiInput" placeholder="Write how the AI should answer next time..." style="
+      width:100%;
+      min-height:90px;
+      padding:10px;
+      border:1px solid #d1d5db;
+      border-radius:10px;
+      font-size:14px;
+      font-family:Arial, sans-serif;
+      resize:vertical;
+      outline:none;
+    ">${reply}</textarea>
+
+    <div style="display:flex; gap:8px; margin-top:10px;">
+      <button id="saveImproveAiBtn" style="
+        border:none;
+        background:#4f46e5;
+        color:white;
+        padding:9px 14px;
+        border-radius:10px;
+        cursor:pointer;
+        font-weight:600;
+      ">Save</button>
+
+      <button id="cancelImproveAiBtn" style="
+        border:none;
+        background:#e5e7eb;
+        color:#111827;
+        padding:9px 14px;
+        border-radius:10px;
+        cursor:pointer;
+        font-weight:600;
+      ">Cancel</button>
+    </div>
+
+    <div id="improveAiStatus" style="margin-top:8px; font-size:13px; color:#374151;"></div>
+  `;
+
+  buttonElement.insertAdjacentElement("afterend", box);
+
+  document.getElementById("cancelImproveAiBtn").onclick = () => {
+    box.remove();
+  };
+
+  document.getElementById("saveImproveAiBtn").onclick = async () => {
+    const better = document.getElementById("improveAiInput").value.trim();
+    if (!better) {
+      document.getElementById("improveAiStatus").innerText = "Please write a better answer first.";
+      return;
+    }
+
+    const companyId = localStorage.getItem("companyId");
+
+    const response = await fetch(`${API_BASE}/improve-ai`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        original: reply,
+        improved: better,
+        companyId
+      })
+    });
+
+    if (!response.ok) {
+      document.getElementById("improveAiStatus").innerText = "Could not save. Please try again.";
+      return;
+    }
+
+    document.getElementById("improveAiStatus").innerText = "Saved ✅";
+    setTimeout(() => {
+      box.remove();
+    }, 800);
+  };
 }
+
 
     async function loadConversations() {
       const companyId = getCompanyId();
@@ -889,7 +964,7 @@ async function improveAI(reply) {
 document.addEventListener("click", function (e) {
   if (e.target.classList.contains("improve-btn")) {
     const reply = decodeURIComponent(e.target.getAttribute("data-reply"));
-improveAI(reply);
+    improveAI(reply, e.target);
   }
 });
 
