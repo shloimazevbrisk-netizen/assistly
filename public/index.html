@@ -909,8 +909,12 @@ async function improveAI(reply, message, buttonElement) {
       }
 
       const chat = document.getElementById("chat");
-      const currentConversationId = localStorage.getItem("conversationId") || Date.now().toString();
-      localStorage.setItem("conversationId", currentConversationId);
+      let currentConversationId = window.currentConversationId;
+
+if (!currentConversationId) {
+  currentConversationId = Date.now().toString();
+  window.currentConversationId = currentConversationId;
+}
 
       if (chat.querySelector(".empty-chat")) {
         chat.innerHTML = "";
