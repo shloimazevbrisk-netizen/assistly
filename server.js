@@ -12,8 +12,23 @@ const pdfParse = require("pdf-parse");
 const axios = require("axios");
 const cheerio = require("cheerio");
 const https = require("https");
+const mongoose = require("mongoose");
 
 const app = express();
+
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log("MongoDB connected"))
+  .catch(err => console.error(err));
+
+const Conversation = mongoose.model("Conversation", {
+  companyId: String,
+  conversationId: String,
+  message: String,
+  reply: String,
+  email: String,
+  time: String
+});
+
 const upload = multer({ dest: "uploads/" });
 
 app.use(cors());
@@ -244,20 +259,16 @@ Email: ${emailMatch ? emailMatch[0] : "not provided"}
 
     const answer = response.choices[0].message.content;
 
-    const conversations = readJson(CONVERSATIONS_FILE, []);
     const finalConversationId = conversationId || Date.now().toString();
 
-    conversations.push({
-      id: Date.now().toString(),
-      companyId,
-      conversationId: finalConversationId,
-      message,
-      reply: answer,
-      email: emailMatch ? emailMatch[0].toLowerCase() : null,
-      time: new Date().toISOString()
-    });
-
-    writeJson(CONVERSATIONS_FILE, conversations);
+await Conversation.create({
+  companyId,
+  conversationId: finalConversationId,
+  message,
+  reply: answer,
+  email: emailMatch ? emailMatch[0].toLowerCase() : null,
+  time: new Date().toISOString()
+});
 
     if (emailMatch) {
       const leads = readJson(LEADS_FILE, []);
