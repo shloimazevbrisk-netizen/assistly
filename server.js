@@ -70,12 +70,22 @@ function getAIFixes(companyId) {
 
 function saveAIFix(companyId, original, improved) {
   const all = readJson(AI_FIXES_FILE, []);
-  all.push({
-    id: Date.now().toString(),
-    companyId,
-    original,
-    improved
-  });
+
+  const existing = all.find(
+    f => f.companyId === companyId && f.original === original
+  );
+
+  if (existing) {
+    existing.improved = improved; // ✅ overwrite existing fix
+  } else {
+    all.push({
+      id: Date.now().toString(),
+      companyId,
+      original,
+      improved
+    });
+  }
+
   writeJson(AI_FIXES_FILE, all);
 }
 
