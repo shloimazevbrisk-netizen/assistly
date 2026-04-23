@@ -309,9 +309,29 @@ app.get("/conversations", async (req, res) => {
     return res.status(400).json({ message: "companyId is required" });
   }
 
-  const companyConversations = await Conversation.find({ companyId }).sort({ time: 1 });
+  const allMessages = await Conversation.find({ companyId }).sort({ time: 1 });
 
-  res.json(companyConversations);
+const grouped = {};
+
+allMessages.forEach(msg => {
+  if (!grouped[msg.conversationId]) {
+    grouped[msg.conversationId] = [];
+  }
+  grouped[msg.conversationId].push(msg);
+});
+
+const result = Object.keys(grouped).map(id => {
+  const messages = grouped[id];
+  const last = messages[messages.length - 1];
+
+  return {
+    conversationId: id,
+    email: last.email || "Unknown contact",
+    message: last.message || ""
+  };
+}).sort((a, b) => Number(b.conversationId) - Number(a.conversationId));
+
+res.json(result);
 });
 
 app.get("/conversation-messages", async (req, res) => {
@@ -321,12 +341,12 @@ app.get("/conversation-messages", async (req, res) => {
     return res.status(400).json({ message: "companyId and conversationId are required" });
   }
 
-  const conversations = readJson(CONVERSATIONS_FILE, []);
-  const messages = conversations.filter(
-    c => c.companyId === companyId && c.conversationId === conversationId
-  );
+  const messages = await Conversation.find({
+  companyId,
+  conversationId
+}).sort({ time: 1 });
 
-  res.json(messages);
+res.json(messages);
 });
 
 app.get("/lead-conversation", (req, res) => {

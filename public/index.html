@@ -909,11 +909,11 @@ async function improveAI(reply, message, buttonElement) {
       }
 
       const chat = document.getElementById("chat");
-      let currentConversationId = window.currentConversationId;
+      let currentConversationId = localStorage.getItem("conversationId");
 
 if (!currentConversationId) {
   currentConversationId = Date.now().toString();
-  window.currentConversationId = currentConversationId;
+  localStorage.setItem("conversationId", currentConversationId);
 }
 
       if (chat.querySelector(".empty-chat")) {
