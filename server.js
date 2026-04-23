@@ -418,8 +418,19 @@ app.post("/upload-pdf", upload.single("pdf"), async (req, res) => {
     const pdfData = await pdfParse(dataBuffer);
     const text = pdfData.text || "";
 
-    const oldKnowledge = getCompanyKnowledge(companyId);
-    saveCompanyKnowledge(companyId, `${oldKnowledge}\n\n${text}`.trim());
+    await CompanyData.findOneAndUpdate(
+  { companyId },
+  {
+    $set: {
+      knowledge: await (async () => {
+        const existing = await CompanyData.findOne({ companyId });
+        const old = existing?.knowledge || "";
+        return `${old}\n\n${text}`.trim();
+      })()
+    }
+  },
+  { upsert: true }
+);
 
     res.json({ message: "PDF uploaded and processed" });
   } catch (err) {
