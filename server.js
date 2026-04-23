@@ -431,31 +431,24 @@ app.post("/save-website", async (req, res) => {
   const { url, companyId } = req.body;
 
   if (!url || !companyId) {
-    return res.status(400).json({ message: "URL and companyId are required" });
+    return res.status(400).json({ message: "Missing data" });
   }
 
   try {
-    const response = await axios.get(url, {
-      httpsAgent: new https.Agent({
-        rejectUnauthorized: false
-      })
-    });
+    const response = await axios.get(url);
+    const $ = cheerio.load(response.data);
+    const text = $("body").text();
 
-    const html = response.data;
-    const $ = cheerio.load(html);
+    await CompanyData.findOneAndUpdate(
+      { companyId },
+      { knowledge: text },
+      { upsert: true }
+    );
 
-    let text = "";
-    $("p").each((i, el) => {
-      text += $(el).text() + "\n";
-    });
-
-    const oldKnowledge = getCompanyKnowledge(companyId);
-    saveCompanyKnowledge(companyId, `${oldKnowledge}\n\n${text}`.trim());
-
-    res.json({ message: "Website saved and processed" });
+    res.json({ message: "Website saved successfully" });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Error reading website" });
+    res.status(500).json({ message: "Error fetching website" });
   }
 });
 
