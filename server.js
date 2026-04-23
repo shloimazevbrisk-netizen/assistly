@@ -302,7 +302,7 @@ await Conversation.create({
   }
 });
 
-app.get("/conversations", (req, res) => {
+app.get("/conversations", async (req, res) => {
   const { companyId } = req.query;
 
   if (!companyId) {
@@ -314,7 +314,7 @@ app.get("/conversations", (req, res) => {
   res.json(companyConversations);
 });
 
-app.get("/conversation-messages", (req, res) => {
+app.get("/conversation-messages", async (req, res) => {
   const { companyId, conversationId } = req.query;
 
   if (!companyId || !conversationId) {
