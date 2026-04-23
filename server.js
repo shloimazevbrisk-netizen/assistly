@@ -29,6 +29,11 @@ const Conversation = mongoose.model("Conversation", {
   time: String
 });
 
+const CompanyData = mongoose.model("CompanyData", {
+  companyId: String,
+  knowledge: String
+});
+
 const upload = multer({ dest: "uploads/" });
 
 app.use(cors());
