@@ -375,10 +375,16 @@ app.get("/leads", (req, res) => {
     return res.status(400).json({ message: "companyId is required" });
   }
 
-  const leads = readJson(LEADS_FILE, []);
-  const companyLeads = leads.filter(l => l.companyId === companyId);
+  app.get("/leads", async (req, res) => {
+  const { companyId } = req.query;
 
-  res.json(companyLeads);
+  if (!companyId) {
+    return res.status(400).json({ message: "companyId is required" });
+  }
+
+  const leads = await Lead.find({ companyId }).sort({ time: -1 });
+
+  res.json(leads);
 });
 
 app.delete("/delete-lead/:id", (req, res) => {
