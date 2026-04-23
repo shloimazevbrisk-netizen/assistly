@@ -309,32 +309,9 @@ app.get("/conversations", (req, res) => {
     return res.status(400).json({ message: "companyId is required" });
   }
 
-  const conversations = readJson(CONVERSATIONS_FILE, []);
-  const companyConversations = conversations.filter(c => c.companyId === companyId);
+  const companyConversations = await Conversation.find({ companyId }).sort({ time: 1 });
 
-  const grouped = {};
-
-  companyConversations.forEach(msg => {
-    if (!grouped[msg.conversationId]) {
-      grouped[msg.conversationId] = [];
-    }
-    grouped[msg.conversationId].push(msg);
-  });
-
-  const result = Object.keys(grouped)
-    .map(conversationId => {
-      const messages = grouped[conversationId];
-      const last = messages[messages.length - 1];
-
-      return {
-        conversationId,
-        email: last.email || "Unknown contact",
-        lastMessage: last.message || ""
-      };
-    })
-    .sort((a, b) => Number(b.conversationId) - Number(a.conversationId));
-
-  res.json(result);
+  res.json(companyConversations);
 });
 
 app.get("/conversation-messages", (req, res) => {
