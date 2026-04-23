@@ -34,6 +34,12 @@ const CompanyData = mongoose.model("CompanyData", {
   knowledge: String
 });
 
+const AIFix = mongoose.model("AIFix", {
+  companyId: String,
+  original: String,
+  improved: String
+});
+
 const upload = multer({ dest: "uploads/" });
 
 app.use(cors());
@@ -83,30 +89,16 @@ function writeJson(filePath, data) {
   fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
 }
 
-function getAIFixes(companyId) {
-  const all = readJson(AI_FIXES_FILE, []);
-  return all.filter(f => f.companyId === companyId);
+async function getAIFixes(companyId) {
+  return await AIFix.find({ companyId });
 }
 
-function saveAIFix(companyId, original, improved) {
-  const all = readJson(AI_FIXES_FILE, []);
-
-  const existing = all.find(
-    f => f.companyId === companyId && f.original === original
+async function saveAIFix(companyId, original, improved) {
+  await AIFix.findOneAndUpdate(
+    { companyId, original },
+    { improved },
+    { upsert: true }
   );
-
-  if (existing) {
-    existing.improved = improved; // ✅ overwrite existing fix
-  } else {
-    all.push({
-      id: Date.now().toString(),
-      companyId,
-      original,
-      improved
-    });
-  }
-
-  writeJson(AI_FIXES_FILE, all);
 }
 
 function slugifyCompanyName(name) {
@@ -195,7 +187,7 @@ app.post("/chat", async (req, res) => {
 
   const companyDoc = await CompanyData.findOne({ companyId });
 const companyData = companyDoc ? companyDoc.knowledge : "";
-const fixes = getAIFixes(companyId);
+const fixes = await getAIFixes(companyId);
 
 const normalize = (text) =>
   text.toLowerCase().replace(/[^\w\s]/gi, "").trim();
