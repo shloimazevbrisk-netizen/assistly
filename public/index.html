@@ -866,7 +866,7 @@ async function improveAI(reply, message, buttonElement) {
         div.className = "convo";
 
         const title = convo.email || "Unknown contact";
-        const preview = convo.lastMessage || "No message";
+        const preview = convo.message || "No message";
 
         div.innerHTML = `
           <div class="convo-title">${escapeHtml(title)}</div>
