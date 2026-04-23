@@ -40,6 +40,13 @@ const AIFix = mongoose.model("AIFix", {
   improved: String
 });
 
+const Lead = mongoose.model("Lead", {
+  companyId: String,
+  name: String,
+  email: String,
+  time: String
+});
+
 const upload = multer({ dest: "uploads/" });
 
 app.use(cors());
@@ -268,26 +275,22 @@ await Conversation.create({
   time: new Date().toISOString()
 });
 
-    if (emailMatch) {
-      const leads = readJson(LEADS_FILE, []);
-      const existingLead = leads.find(
-        l =>
-          l.companyId === companyId &&
-          l.email &&
-          l.email.toLowerCase() === emailMatch[0].toLowerCase()
-      );
 
-      if (!existingLead) {
-        leads.push({
-          id: Date.now().toString(),
-          companyId,
-          name,
-          email: emailMatch[0].toLowerCase(),
-          time: new Date().toISOString()
-        });
+      if (emailMatch) {
+  const existingLead = await Lead.findOne({
+    companyId,
+    email: emailMatch[0].toLowerCase()
+  });
 
-        writeJson(LEADS_FILE, leads);
-      }
+  if (!existingLead) {
+    await Lead.create({
+      companyId,
+      name,
+      email: emailMatch[0].toLowerCase(),
+      time: new Date().toISOString()
+    });
+  }
+}
     }
 
     res.json({
