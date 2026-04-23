@@ -193,7 +193,8 @@ app.post("/chat", async (req, res) => {
     return res.status(400).json({ message: "Missing message or companyId" });
   }
 
-  const companyData = getCompanyKnowledge(companyId);
+  const companyDoc = await CompanyData.findOne({ companyId });
+const companyData = companyDoc ? companyDoc.knowledge : "";
 const fixes = getAIFixes(companyId);
 
 const normalize = (text) =>
