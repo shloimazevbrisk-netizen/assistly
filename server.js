@@ -152,9 +152,11 @@ app.post("/login", async (req, res) => {
     return res.status(400).json({ message: "Company name and password are required" });
   }
 
+  const companyId = companyName.trim().toLowerCase().replace(/\s+/g, "-");
+
   const company = await mongoose.connection
     .collection("companies")
-    .findOne({ companyName });
+    .findOne({ companyId });
 
   if (!company) {
     return res.status(401).json({ message: "Invalid login" });
