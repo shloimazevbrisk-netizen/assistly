@@ -112,16 +112,6 @@ function slugifyCompanyName(name) {
   return name.trim().toLowerCase().replace(/\s+/g, "-");
 }
 
-function getCompanyKnowledge(companyId) {
-  const allData = readJson(COMPANY_DATA_FILE, {});
-  return allData[companyId] || "";
-}
-
-function saveCompanyKnowledge(companyId, text) {
-  const allData = readJson(COMPANY_DATA_FILE, {});
-  allData[companyId] = text;
-  writeJson(COMPANY_DATA_FILE, allData);
-}
 
 app.post("/signup", async (req, res) => {
   const { companyName, password } = req.body;
@@ -130,26 +120,27 @@ app.post("/signup", async (req, res) => {
     return res.status(400).json({ message: "Company name and password are required" });
   }
 
-  const companies = readJson(COMPANIES_FILE, []);
-  const existing = companies.find(
-    c => c.companyName.toLowerCase() === companyName.toLowerCase()
-  );
+  const companyId = slugifyCompanyName(companyName);
+
+  const existing = await CompanyData.findOne({ companyId });
 
   if (existing) {
     return res.status(400).json({ message: "Company already exists" });
   }
 
-  const companyId = slugifyCompanyName(companyName);
   const passwordHash = await bcrypt.hash(password, 10);
 
-  companies.push({
+  await CompanyData.create({
+    companyId,
+    knowledge: ""
+  });
+
+  await mongoose.connection.collection("companies").insertOne({
     companyId,
     companyName,
     passwordHash,
     createdAt: new Date().toISOString()
   });
-
-  writeJson(COMPANIES_FILE, companies);
 
   res.json({ success: true, companyId, companyName });
 });
@@ -350,22 +341,19 @@ app.get("/conversation-messages", async (req, res) => {
 res.json(messages);
 });
 
-app.get("/lead-conversation", (req, res) => {
+app.get("/lead-conversation", async (req, res) => {
   const { companyId, email } = req.query;
 
   if (!companyId || !email) {
     return res.status(400).json({ message: "companyId and email are required" });
   }
 
-  const conversations = readJson(CONVERSATIONS_FILE, []);
-  const matches = conversations.filter(
-    c =>
-      c.companyId === companyId &&
-      c.email &&
-      c.email.toLowerCase() === email.toLowerCase()
-  );
+  const messages = await Conversation.find({
+    companyId,
+    email: email.toLowerCase()
+  }).sort({ time: 1 });
 
-  res.json(matches);
+  res.json(messages);
 });
 
 app.get("/leads", async (req, res) => {
