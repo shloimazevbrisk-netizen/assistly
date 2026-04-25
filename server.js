@@ -195,14 +195,16 @@ if (foundFix) {
 
   const emailMatch = message.match(/[^\s]+@[^\s]+\.[^\s]+/);
 
-  let name = "Unknown";
+  let name = null;
   const nameMatch = message.match(/(?:my name is|i am|this is)\s+([a-zA-Z]+)/i);
 
-  if (nameMatch) {
-    name = nameMatch[1];
-  } else if (emailMatch) {
-    name = message.trim().split(/\s+/)[0];
-  }
+ if (nameMatch) {
+  name = nameMatch[1];
+}
+
+if (!name && emailMatch) {
+  name = "Lead";
+}
 
   try {
     const response = await openai.chat.completions.create({
@@ -263,9 +265,17 @@ await Conversation.create({
   });
 
   if (!existingLead) {
+
+    if (emailMatch) {
+  const existingLead = await Lead.findOne({
+    companyId,
+    email: emailMatch[0].toLowerCase()
+  });
+
+  if (!existingLead) {
     await Lead.create({
       companyId,
-      name,
+      name: name || "Lead",
       email: emailMatch[0].toLowerCase(),
       time: new Date().toISOString()
     });
