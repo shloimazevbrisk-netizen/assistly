@@ -498,7 +498,7 @@ messagesDiv.scrollTop = messagesDiv.scrollHeight;
 input.value = "";
 
 // send to backend
-let companyId = "rockleadership-solutions"; // fallback
+let companyId = null;
 
 const scripts = document.getElementsByTagName("script");
 
@@ -506,6 +506,11 @@ for (let s of scripts) {
   if (s.src.includes("widget.js") && s.getAttribute("data-company")) {
     companyId = s.getAttribute("data-company");
   }
+}
+
+if (!companyId) {
+  console.error("Assistly: Missing data-company attribute on widget script");
+  return;
 }
 
 let conversationId = window.assistlyConversationId || null;
