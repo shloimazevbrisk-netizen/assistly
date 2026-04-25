@@ -941,7 +941,16 @@ if (!currentConversationId) {
         })
       });
 
-      const data = await response.json();
+      if (!response.ok) {
+  chat.innerHTML += `
+    <div class="message-row bot-row">
+      <div class="bubble bot-bubble">Error sending message</div>
+    </div>
+  `;
+  return;
+}
+
+const data = await response.json();
 
       chat.innerHTML += `
   <div class="message-row bot-row">
