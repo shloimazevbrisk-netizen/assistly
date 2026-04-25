@@ -156,6 +156,26 @@ app.post("/chat", async (req, res) => {
 const companyData = companyDoc ? companyDoc.knowledge : "";
 const fixes = await getAIFixes(companyId);
 
+function getRelevantContext(text, query) {
+  const parts = text.split("\n").filter(p => p.trim().length > 0);
+
+  const scored = parts.map(p => {
+    let score = 0;
+    query.toLowerCase().split(" ").forEach(word => {
+      if (p.toLowerCase().includes(word)) score++;
+    });
+    return { text: p, score };
+  });
+
+  return scored
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 5)
+    .map(p => p.text)
+    .join("\n");
+}
+
+const relevantContext = getRelevantContext(companyData, message);
+
 const normalize = (text) =>
   text.toLowerCase().replace(/[^\w\s]/gi, "").trim();
 
@@ -199,7 +219,7 @@ If the question is NOT related to the company, respond with:
 "I'm here to help with questions about our company and services."
 
 Here is information about the company:
-${companyData || "No company data yet"}
+${relevantContext || "No company data yet"}
 
 Rules:
 - Only answer using the company information
