@@ -1022,7 +1022,7 @@ improveAI(reply, message, e.target);
         openBtn.onclick = openLead;
 
         deleteBtn.onclick = async () => {
-          await deleteLead(lead.id);
+          await deleteLead(lead._id);
         };
 
         list.appendChild(row);
