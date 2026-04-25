@@ -258,15 +258,7 @@ await Conversation.create({
 });
 
 
-      if (emailMatch) {
-  const existingLead = await Lead.findOne({
-    companyId,
-    email: emailMatch[0].toLowerCase()
-  });
-
-  if (!existingLead) {
-
-    if (emailMatch) {
+     if (emailMatch) {
   const existingLead = await Lead.findOne({
     companyId,
     email: emailMatch[0].toLowerCase()
