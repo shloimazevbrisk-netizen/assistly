@@ -186,6 +186,13 @@ const foundFix = fixes.find(f =>
   normalize(f.original).includes(normalize(message))
 );
 
+if (foundFix) {
+  return res.json({
+    reply: foundFix.improved,
+    conversationId: conversationId || Date.now().toString()
+  });
+}
+
   const emailMatch = message.match(/[^\s]+@[^\s]+\.[^\s]+/);
 
   let name = "Unknown";
@@ -196,13 +203,6 @@ const foundFix = fixes.find(f =>
   } else if (emailMatch) {
     name = message.trim().split(/\s+/)[0];
   }
-
-if (foundFix) {
-  return res.json({
-    reply: foundFix.improved,
-    conversationId: conversationId || Date.now().toString()
-  });
-}
 
   try {
     const response = await openai.chat.completions.create({
