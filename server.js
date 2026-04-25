@@ -152,10 +152,9 @@ app.post("/login", async (req, res) => {
     return res.status(400).json({ message: "Company name and password are required" });
   }
 
-  const companies = readJson(COMPANIES_FILE, []);
-  const company = companies.find(
-    c => c.companyName.toLowerCase() === companyName.toLowerCase()
-  );
+  const company = await mongoose.connection
+    .collection("companies")
+    .findOne({ companyName });
 
   if (!company) {
     return res.status(401).json({ message: "Invalid login" });
