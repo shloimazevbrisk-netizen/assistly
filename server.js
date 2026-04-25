@@ -345,7 +345,10 @@ app.delete("/delete-lead/:id", async (req, res) => {
     return res.status(400).json({ message: "companyId is required" });
   }
 
-  await Lead.findByIdAndDelete(id);
+await Lead.findOneAndDelete({
+  _id: id,
+  companyId
+});
 
   res.json({ success: true });
 });
