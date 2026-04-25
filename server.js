@@ -459,23 +459,6 @@ app.post("/improve-ai", (req, res) => {
   res.json({ success: true });
 });
 
-app.get("/fix-company", async (req, res) => {
-  const companyName = "rock leadership solutions";
-  const companyId = "rock-leadership-solutions";
-  const password = "test123"; // put your real password
-
-  const passwordHash = await bcrypt.hash(password, 10);
-
-  await mongoose.connection.collection("companies").insertOne({
-    companyId,
-    companyName,
-    passwordHash,
-    createdAt: new Date().toISOString()
-  });
-
-  res.send("Company fixed");
-});
-
 app.get("/widget.js", (req, res) => {
   res.setHeader("Content-Type", "application/javascript");
 
