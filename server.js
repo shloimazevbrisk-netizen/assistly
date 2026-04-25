@@ -380,7 +380,7 @@ app.get("/leads", async (req, res) => {
   res.json(leads);
 });
 
-app.delete("/delete-lead/:id", (req, res) => {
+app.delete("/delete-lead/:id", async (req, res) => {
   const { id } = req.params;
   const { companyId } = req.query;
 
@@ -388,9 +388,10 @@ app.delete("/delete-lead/:id", (req, res) => {
     return res.status(400).json({ message: "companyId is required" });
   }
 
-  let leads = readJson(LEADS_FILE, []);
-  leads = leads.filter(l => !(l.id === id && l.companyId === companyId));
-  writeJson(LEADS_FILE, leads);
+  await Lead.findOneAndDelete({
+    _id: id,
+    companyId
+  });
 
   res.json({ success: true });
 });
