@@ -246,7 +246,22 @@ Email: ${emailMatch ? emailMatch[0] : "not provided"}
 
     const answer = response.choices[0].message.content;
 
-    const finalConversationId = conversationId || Date.now().toString();
+    let finalConversationId = conversationId;
+
+if (!finalConversationId && emailMatch) {
+  const existingConversation = await Conversation.findOne({
+    companyId,
+    email: emailMatch[0].toLowerCase()
+  }).sort({ time: -1 });
+
+  if (existingConversation) {
+    finalConversationId = existingConversation.conversationId;
+  }
+}
+
+if (!finalConversationId) {
+  finalConversationId = Date.now().toString();
+}
 
 await Conversation.create({
   companyId,
