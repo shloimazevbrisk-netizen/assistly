@@ -368,14 +368,7 @@ app.get("/lead-conversation", (req, res) => {
   res.json(matches);
 });
 
-app.get("/leads", (req, res) => {
-  const { companyId } = req.query;
-
-  if (!companyId) {
-    return res.status(400).json({ message: "companyId is required" });
-  }
-
-  app.get("/leads", async (req, res) => {
+app.get("/leads", async (req, res) => {
   const { companyId } = req.query;
 
   if (!companyId) {
