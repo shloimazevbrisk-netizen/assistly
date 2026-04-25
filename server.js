@@ -64,26 +64,6 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 });
 
-const DATA_DIR = __dirname;
-const COMPANIES_FILE = path.join(DATA_DIR, "companies.json");
-const LEADS_FILE = path.join(DATA_DIR, "leads.json");
-const CONVERSATIONS_FILE = path.join(DATA_DIR, "conversations.json");
-const COMPANY_DATA_FILE = path.join(DATA_DIR, "company-data.json");
-
-const AI_FIXES_FILE = path.join(DATA_DIR, "ai-fixes.json");
-ensureFile(AI_FIXES_FILE, []);
-
-function ensureFile(filePath, defaultValue) {
-  if (!fs.existsSync(filePath)) {
-    fs.writeFileSync(filePath, JSON.stringify(defaultValue, null, 2));
-  }
-}
-
-ensureFile(COMPANIES_FILE, []);
-ensureFile(LEADS_FILE, []);
-ensureFile(CONVERSATIONS_FILE, []);
-ensureFile(COMPANY_DATA_FILE, {});
-
 function readJson(filePath, fallback) {
   try {
     return JSON.parse(fs.readFileSync(filePath, "utf-8"));
