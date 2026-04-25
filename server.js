@@ -312,18 +312,21 @@ app.get("/conversations", async (req, res) => {
 const grouped = {};
 
 allMessages.forEach(msg => {
-  if (!grouped[msg.conversationId]) {
-    grouped[msg.conversationId] = [];
+  const key = msg.email || msg.conversationId;
+
+  if (!grouped[key]) {
+    grouped[key] = [];
   }
-  grouped[msg.conversationId].push(msg);
+
+  grouped[key].push(msg);
 });
 
-const result = Object.keys(grouped).map(id => {
-  const messages = grouped[id];
+const result = Object.keys(grouped).map(key => {
+  const messages = grouped[key];
   const last = messages[messages.length - 1];
 
   return {
-    conversationId: id,
+    conversationId: messages[0].conversationId,
     email: last.email || "Unknown contact",
     message: last.message || ""
   };
