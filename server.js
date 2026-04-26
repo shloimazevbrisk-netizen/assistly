@@ -303,9 +303,11 @@ await Conversation.create({
   isNew: true
 });
 
+const company = await CompanyData.findOne({ companyId });
+
 await transporter.sendMail({
   from: process.env.EMAIL_USER,
-  to: process.env.EMAIL_USER,
+  to: company?.notificationEmail || process.env.EMAIL_USER,
   subject: "🔥 New Lead from Assistly",
   text: `
 New lead received:
