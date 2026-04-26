@@ -884,13 +884,14 @@ Object.values(latestByEmail).forEach(convo => {
   const preview = (convo.message || "No message").slice(0, 60);
 
   div.innerHTML = `
-    <div style="font-weight:600;">
-      ${escapeHtml(name)}
-    </div>
-    <div style="font-size:12px;color:#666;margin-top:2px;">
-      ${escapeHtml(preview)}
-    </div>
-  `;
+  <div style="font-weight:600; display:flex; justify-content:space-between;">
+    <span>${escapeHtml(name)}</span>
+    ${convo.isNew ? '<span style="color:red;font-size:11px;">🔥 NEW</span>' : ''}
+  </div>
+  <div style="font-size:12px;color:#666;margin-top:2px;">
+    ${escapeHtml(preview)}
+  </div>
+`;
 
   div.onclick = async () => {
     document.querySelectorAll(".convo").forEach(x => x.classList.remove("active"));
