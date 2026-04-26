@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Assistly</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f7fb;
+      color: #111827;
+    }
+
+    .topbar {
+      height: 72px;
+      background: linear-gradient(90deg, #4f46e5, #6366f1);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    }
+
+    .brand {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .topbar-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .topbar-actions button,
+    .primary-btn,
+    .secondary-btn,
+    .danger-btn {
+      border: none;
+      border-radius: 10px;
+      padding: 10px 16px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .topbar-actions button,
+    .primary-btn {
+      background: white;
+      color: #4338ca;
+      font-weight: 600;
+    }
+
+    .secondary-btn {
+      background: #e5e7eb;
+      color: #111827;
+      font-weight: 600;
+    }
+
+    .danger-btn {
+      background: #ef4444;
+      color: white;
+      font-weight: 600;
+    }
+
+    .page {
+      display: none;
+      min-height: calc(100vh - 72px);
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    .auth-wrap {
+      min-height: calc(100vh - 72px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 30px;
+    }
+
+    .auth-card {
+      width: 100%;
+      max-width: 460px;
+      background: white;
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 15px 40px rgba(15, 23, 42, 0.08);
+    }
+
+    .auth-card h1 {
+      margin-top: 0;
+      margin-bottom: 8px;
+      font-size: 30px;
+    }
+
+    .muted {
+      color: #6b7280;
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid #d1d5db;
+      border-radius: 12px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      border-color: #6366f1;
+    }
+
+    .auth-switch {
+      margin-top: 18px;
+      text-align: center;
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    .auth-switch button {
+      border: none;
+      background: none;
+      color: #4f46e5;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .dashboard {
+      display: flex;
+      height: calc(100vh - 72px);
+    }
+
+    .sidebar {
+      width: 320px;
+      background: white;
+      border-right: 1px solid #e5e7eb;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-header {
+      padding: 18px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .sidebar-header h3 {
+      margin: 0 0 6px 0;
+      font-size: 18px;
+    }
+
+    .sidebar-header p {
+      margin: 0;
+      color: #6b7280;
+      font-size: 13px;
+    }
+
+    #conversationsList {
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .convo {
+      padding: 16px 18px;
+      border-bottom: 1px solid #f1f5f9;
+      cursor: pointer;
+      transition: 0.15s ease;
+    }
+
+    .convo:hover,
+    .convo.active {
+      background: #eef2ff;
+    }
+
+    .convo-title {
+      font-weight: 700;
+      margin-bottom: 4px;
+      color: #111827;
+    }
+
+    .convo-sub {
+      color: #6b7280;
+      font-size: 13px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .main-chat {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .chat-top {
+      padding: 18px 22px;
+      background: white;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .chat-top h2 {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    .chat-top p {
+      margin: 4px 0 0 0;
+      font-size: 13px;
+      color: #6b7280;
+    }
+
+    #chat {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .empty-chat {
+      margin: auto;
+      text-align: center;
+      color: #6b7280;
+      font-size: 15px;
+    }
+
+    .message-row {
+      display: flex;
+      width: 100%;
+    }
+
+    .message-row.user-row {
+  justify-content: flex-start;
+}
+
+.message-row.bot-row {
+  justify-content: flex-end;
+}
+
+    .bubble {
+      max-width: 72%;
+      padding: 12px 16px;
+      border-radius: 18px;
+      line-height: 1.45;
+      white-space: pre-wrap;
+      word-break: break-word;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+
+    .user-bubble {
+  background: white;
+  color: #111827;
+  border: 1px solid #e5e7eb;
+  border-bottom-left-radius: 6px;
+}
+
+.bot-bubble {
+  background: linear-gradient(90deg, #4f46e5, #6366f1);
+  color: white;
+  border-bottom-right-radius: 6px;
+}
+
+    .input-bar {
+      background: white;
+      border-top: 1px solid #e5e7eb;
+      padding: 16px;
+      display: flex;
+      gap: 12px;
+    }
+
+    .input-bar input {
+      flex: 1;
+      padding: 14px 16px;
+      border-radius: 14px;
+      border: 1px solid #d1d5db;
+      font-size: 15px;
+      outline: none;
+    }
+
+    .input-bar input:focus {
+      border-color: #6366f1;
+    }
+
+    .input-bar button {
+      min-width: 100px;
+      border: none;
+      border-radius: 14px;
+      background: #4f46e5;
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 15px;
+    }
+
+    .panel-wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 28px;
+    }
+
+    .panel-card {
+      background: white;
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 15px 40px rgba(15, 23, 42, 0.07);
+    }
+
+    .panel-card h2 {
+      margin-top: 0;
+    }
+
+    .lead-item {
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      background: #fff;
+    }
+
+    .lead-main {
+      cursor: pointer;
+      flex: 1;
+    }
+
+    .lead-name {
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .lead-email {
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    .lead-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .settings-grid {
+      display: grid;
+      gap: 18px;
+    }
+
+    .notice {
+      background: #eef2ff;
+      color: #3730a3;
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-bottom: 16px;
+      font-size: 14px;
+    }
+
+    .status {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #374151;
+    }
+
+    @media (max-width: 900px) {
+      .dashboard {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        width: 100%;
+        height: 260px;
+      }
+
+      .bubble {
+        max-width: 90%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand">Assistly</div>
+    <div class="topbar-actions" id="topbarActions" style="display:none;">
+      <button onclick="showPage('dashboardPage')">Dashboard</button>
+      <button onclick="openLeads()">Leads</button>
+      <button onclick="openSettings()">Settings</button>
+      <button onclick="logout()">Logout</button>
+    </div>
+  </div>
+
+  <div id="authPage" class="page active">
+    <div class="auth-wrap">
+      <div class="auth-card">
+        <div id="loginView">
+          <h1>Sign in</h1>
+          <div class="muted">Log in to manage your company chatbot, leads, and conversations.</div>
+
+          <div class="form-group">
+            <label>Company name</label>
+            <input id="loginCompanyName" placeholder="Your company name" />
+          </div>
+
+          <div class="form-group">
+            <label>Password</label>
+            <input id="loginPassword" type="password" placeholder="Password" />
+          </div>
+
+          <button class="primary-btn" style="width:100%;" onclick="login()">Sign in</button>
+
+          <div class="auth-switch">
+            Don’t have an account?
+            <button onclick="showSignup()">Sign up</button>
+          </div>
+        </div>
+
+        <div id="signupView" style="display:none;">
+          <h1>Create account</h1>
+          <div class="muted">Create a company account and start setting up your Assistly chatbot.</div>
+
+          <div class="form-group">
+            <label>Company name</label>
+            <input id="signupCompanyName" placeholder="Company name" />
+          </div>
+
+          <div class="form-group">
+            <label>Password</label>
+            <input id="signupPassword" type="password" placeholder="Create password" />
+          </div>
+
+          <button class="primary-btn" style="width:100%;" onclick="signup()">Sign up</button>
+
+          <div class="auth-switch">
+            Already have an account?
+            <button onclick="showLogin()">Back to sign in</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="dashboardPage" class="page">
+    <div class="dashboard">
+      <div class="sidebar">
+        <div class="sidebar-header">
+          <h3>Conversations</h3>
+          <p id="companyLabel">Logged in</p>
+        </div>
+        <div id="conversationsList"></div>
+      </div>
+
+      <div class="main-chat">
+        <div class="chat-top">
+          <div>
+            <h2 id="chatTitle">Inbox</h2>
+            <p id="chatSubtitle">Select a conversation or lead to view messages</p>
+          </div>
+        </div>
+
+        <div id="chat">
+          <div class="empty-chat">No conversation selected yet.</div>
+        </div>
+
+        <div class="input-bar">
+          <input id="input" placeholder="Type your message..." />
+          <button onclick="send()">Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="leadsPage" class="page">
+    <div class="panel-wrap">
+      <div class="panel-card">
+        <h2>New Leads</h2>
+        <div class="notice">Click a lead to open their chat history.</div>
+        <div id="leadsList"></div>
+        <button class="secondary-btn" onclick="showPage('dashboardPage')">Back</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="settingsPage" class="page">
+    <div class="panel-wrap">
+      <div class="panel-card">
+        <h2>Settings</h2>
+        <div class="notice">Upload a PDF or save your website content so the chatbot can answer using company info.</div>
+
+        <div class="settings-grid">
+          <div>
+            <div class="form-group">
+              <label>Upload PDF</label>
+              <input type="file" id="pdfInput" />
+            </div>
+            <button class="primary-btn" onclick="uploadPDF()">Upload PDF</button>
+          </div>
+
+          <div>
+            <div class="form-group">
+              <label>Website URL</label>
+              <input type="text" id="websiteInput" placeholder="https://yourcompany.com" />
+            </div>
+            <button class="primary-btn" onclick="saveWebsite()">Save Website</button>
+          </div>
+        </div>
+
+        <div style="margin-top:20px;">
+        <button class="primary-btn" onclick="getEmbedCode()">Get Chat Code</button>
+        </div>
+
+        <div style="margin-top:20px;">
+  <h3>Lead Notification Email</h3>
+  <input id="notificationEmail" placeholder="Enter email to receive leads" />
+  <button class="primary-btn" onclick="saveNotificationEmail()">Save Email</button>
+  <p id="emailStatus"></p>
+</div>
+
+        <div class="status" id="settingsStatus"></div>
+
+        <br />
+        <button class="secondary-btn" onclick="showPage('dashboardPage')">Back</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = "https://assistly-backend-hw4j.onrender.com";
+
+function getEmbedCode() {
+  const companyId = localStorage.getItem("companyId");
+
+  const code = `<scr` + `ipt src="https://assistlychat.com/widget.js" data-company="${companyId}"></scr` + `ipt>`;
+
+  const box = document.createElement("div");
+  box.style.position = "fixed";
+  box.style.top = "50%";
+  box.style.left = "50%";
+  box.style.transform = "translate(-50%, -50%)";
+  box.style.background = "white";
+  box.style.padding = "20px";
+  box.style.borderRadius = "10px";
+  box.style.boxShadow = "0 10px 30px rgba(0,0,0,0.2)";
+  box.style.zIndex = "9999";
+  box.style.width = "400px";
+
+  box.innerHTML = `
+    <h3>Install Chat Widget</h3>
+    <p style="font-size:14px; color:#555;">Copy and paste this code before the closing &lt;/body&gt; tag.</p>
+
+    <textarea id="embedCode" style="width:100%; height:80px; margin-top:10px;">${code}</textarea>
+
+    <button id="copyBtn" style="margin-top:10px; padding:10px; background:#4f46e5; color:white; border:none; border-radius:5px; width:100%;">Copy Code</button>
+
+    <button id="closeBtn" style="margin-top:10px; padding:10px; background:#ddd; border:none; border-radius:5px; width:100%;">Close</button>
+  `;
+
+  document.body.appendChild(box);
+
+  document.getElementById("copyBtn").onclick = () => {
+    const textarea = document.getElementById("embedCode");
+    textarea.select();
+    document.execCommand("copy");
+    alert("Copied!");
+  };
+
+  document.getElementById("closeBtn").onclick = () => {
+    box.remove();
+  };
+}
+
+    function showPage(pageId) {
+      document.querySelectorAll(".page").forEach(page => {
+        page.classList.remove("active");
+      });
+      document.getElementById(pageId).classList.add("active");
+    }
+
+    function showSignup() {
+      document.getElementById("loginView").style.display = "none";
+      document.getElementById("signupView").style.display = "block";
+    }
+
+    function showLogin() {
+      document.getElementById("signupView").style.display = "none";
+      document.getElementById("loginView").style.display = "block";
+    }
+
+    function getCompanyId() {
+      return localStorage.getItem("companyId");
+    }
+
+    function setTopbarVisible(isVisible) {
+      document.getElementById("topbarActions").style.display = isVisible ? "flex" : "none";
+    }
+
+    async function signup() {
+      const companyName = document.getElementById("signupCompanyName").value.trim();
+      const password = document.getElementById("signupPassword").value.trim();
+
+      if (!companyName || !password) {
+        alert("Please fill in company name and password");
+        return;
+      }
+
+      const response = await fetch(`${API_BASE}/signup`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ companyName, password })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.message || "Signup failed");
+        return;
+      }
+
+      alert("Account created. You can now sign in.");
+      showLogin();
+      document.getElementById("loginCompanyName").value = companyName;
+      document.getElementById("loginPassword").value = "";
+    }
+
+    async function login() {
+      const companyName = document.getElementById("loginCompanyName").value.trim();
+      const password = document.getElementById("loginPassword").value.trim();
+
+      if (!companyName || !password) {
+        alert("Please enter company name and password");
+        return;
+      }
+
+      const response = await fetch(`${API_BASE}/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ companyName, password })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.message || "Wrong login");
+        return;
+      }
+
+      localStorage.setItem("companyId", data.companyId);
+      localStorage.setItem("companyName", data.companyName);
+      localStorage.removeItem("conversationId");
+      localStorage.removeItem("selectedLeadEmail");
+
+      document.getElementById("companyLabel").textContent = `Logged in as ${data.companyName}`;
+      setTopbarVisible(true);
+      showPage("dashboardPage");
+      loadConversations();
+      resetChatView();
+    }
+
+    function logout() {
+  localStorage.clear(); // 🔥 important
+
+  setTopbarVisible(false);
+  showPage("authPage");
+  showLogin();
+
+  document.getElementById("chat").innerHTML = `<div class="empty-chat">No conversation selected yet.</div>`;
+  document.getElementById("conversationsList").innerHTML = "";
+}
+
+    function resetChatView() {
+      document.getElementById("chatTitle").textContent = "Inbox";
+      document.getElementById("chatSubtitle").textContent = "Select a conversation or lead to view messages";
+      document.getElementById("chat").innerHTML = `<div class="empty-chat">No conversation selected yet.</div>`;
+    }
+
+    function renderMessages(messages) {
+      const chat = document.getElementById("chat");
+      chat.innerHTML = "";
+
+      if (!messages || messages.length === 0) {
+        chat.innerHTML = `<div class="empty-chat">No messages found.</div>`;
+        return;
+      }
+
+      messages.forEach(msg => {
+        if (msg.message) {
+          chat.innerHTML += `
+            <div class="message-row user-row">
+              <div class="bubble user-bubble">${escapeHtml(msg.message)}</div>
+            </div>
+          `;
+        }
+
+        if (msg.reply) {
+  chat.innerHTML += `
+    <div class="message-row bot-row">
+      <div>
+        <div class="bubble bot-bubble">${escapeHtml(msg.reply)}</div>
+
+
+  <button class="improve-btn" 
+data-reply="${encodeURIComponent(msg.reply)}"
+data-message="${encodeURIComponent(msg.message)}"
+style="
+  margin-top:5px;
+  font-size:12px;
+  background:#eee;
+  border:none;
+  padding:5px 8px;
+  border-radius:6px;
+  cursor:pointer;
+">
+  Improve AI
+</button>
+
+      </div>
+    </div>
+  `;
+}
+      });
+
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement("div");
+      div.textContent = text || "";
+      return div.innerHTML;
+    }
+
+async function improveAI(reply, message, buttonElement) {
+  const oldBox = document.getElementById("improve-ai-box");
+  if (oldBox) oldBox.remove();
+
+  const box = document.createElement("div");
+  box.id = "improve-ai-box";
+  box.style.marginTop = "10px";
+  box.style.background = "#ffffff";
+  box.style.border = "1px solid #e5e7eb";
+  box.style.borderRadius = "12px";
+  box.style.padding = "12px";
+  box.style.boxShadow = "0 6px 18px rgba(0,0,0,0.08)";
+  box.style.maxWidth = "420px";
+
+  box.innerHTML = `
+    <div style="font-size:13px; font-weight:600; margin-bottom:8px; color:#111827;">
+      Improve AI answer
+    </div>
+
+    <textarea id="improveAiInput" placeholder="Write how the AI should answer next time..." style="
+      width:100%;
+      min-height:90px;
+      padding:10px;
+      border:1px solid #d1d5db;
+      border-radius:10px;
+      font-size:14px;
+      font-family:Arial, sans-serif;
+      resize:vertical;
+      outline:none;
+    ">${reply}</textarea>
+
+    <div style="display:flex; gap:8px; margin-top:10px;">
+      <button id="saveImproveAiBtn" style="
+        border:none;
+        background:#4f46e5;
+        color:white;
+        padding:9px 14px;
+        border-radius:10px;
+        cursor:pointer;
+        font-weight:600;
+      ">Save</button>
+
+      <button id="cancelImproveAiBtn" style="
+        border:none;
+        background:#e5e7eb;
+        color:#111827;
+        padding:9px 14px;
+        border-radius:10px;
+        cursor:pointer;
+        font-weight:600;
+      ">Cancel</button>
+    </div>
+
+    <div id="improveAiStatus" style="margin-top:8px; font-size:13px; color:#374151;"></div>
+  `;
+
+  buttonElement.insertAdjacentElement("afterend", box);
+
+  document.getElementById("cancelImproveAiBtn").onclick = () => {
+    box.remove();
+  };
+
+  document.getElementById("saveImproveAiBtn").onclick = async () => {
+    const better = document.getElementById("improveAiInput").value.trim();
+    if (!better) {
+      document.getElementById("improveAiStatus").innerText = "Please write a better answer first.";
+      return;
+    }
+
+    const companyId = localStorage.getItem("companyId");
+
+    const response = await fetch(`${API_BASE}/improve-ai`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+
+      body: JSON.stringify({
+        original: message,
+        improved: better,
+        companyId
+      })
+    });
+
+    if (!response.ok) {
+      document.getElementById("improveAiStatus").innerText = "Could not save. Please try again.";
+      return;
+    }
+
+    document.getElementById("improveAiStatus").innerText = "Saved ✅";
+    setTimeout(() => {
+      box.remove();
+    }, 800);
+  };
+}
+
+
+    async function loadConversations() {
+      const companyId = getCompanyId();
+      if (!companyId) return;
+
+      const res = await fetch(`${API_BASE}/conversations?companyId=${encodeURIComponent(companyId)}`);
+      const data = await res.json();
+
+      const list = document.getElementById("conversationsList");
+      list.innerHTML = "";
+
+      if (!data.length) {
+        list.innerHTML = `<div class="convo"><div class="convo-sub">No conversations yet</div></div>`;
+        return;
+      }
+
+      const latestByEmail = {};
+
+data.forEach(convo => {
+  const email = convo.email;
+  if (!email) return;
+
+  // keep ONLY latest conversation per email
+  if (!latestByEmail[email] || convo.conversationId > latestByEmail[email].conversationId) {
+    latestByEmail[email] = convo;
+  }
+});
+
+Object.values(latestByEmail).forEach(convo => {
+  const div = document.createElement("div");
+  div.className = "convo";
+
+  const name = convo.name && convo.name !== "Unknown"
+    ? convo.name
+    : convo.email;
+
+  const preview = (convo.message || "No message").slice(0, 60);
+
+  div.innerHTML = `
+  <div style="font-weight:600; display:flex; justify-content:space-between;">
+    <span>${escapeHtml(name)}</span>
+    ${convo.isNew ? '<span style="color:red;font-size:11px;">🔥 NEW</span>' : ''}
+  </div>
+  <div style="font-size:12px;color:#666;margin-top:2px;">
+    ${escapeHtml(preview)}
+  </div>
+`;
+
+  div.onclick = async () => {
+    document.querySelectorAll(".convo").forEach(x => x.classList.remove("active"));
+    div.classList.add("active");
+
+    document.getElementById("chatTitle").textContent = name;
+    document.getElementById("chatSubtitle").textContent = "Conversation history";
+
+    let messages = [];
+
+if (convo.email && convo.email !== "Unknown contact") {
+  // lead with email
+  const res2 = await fetch(
+    `${API_BASE}/lead-conversation?companyId=${encodeURIComponent(getCompanyId())}&email=${encodeURIComponent(convo.email)}`
+  );
+  messages = await res2.json();
+
+  localStorage.setItem("selectedLeadEmail", convo.email);
+} else {
+  // anonymous chat
+  const res2 = await fetch(
+    `${API_BASE}/conversation-messages?companyId=${encodeURIComponent(getCompanyId())}&conversationId=${encodeURIComponent(convo.conversationId)}`
+  );
+  messages = await res2.json();
+
+  localStorage.removeItem("selectedLeadEmail");
+}
+
+    if (messages.length) {
+      localStorage.setItem("conversationId", messages[0].conversationId);
+    }
+
+    renderMessages(messages);
+  };
+
+  list.appendChild(div);
+});
+    }
+
+    async function send() {
+      const input = document.getElementById("input");
+      const message = input.value.trim();
+      if (!message) return;
+
+     window.lastUserMessage = message;
+
+      const companyId = getCompanyId();
+      if (!companyId) {
+        alert("Please sign in first");
+        return;
+      }
+
+      const chat = document.getElementById("chat");
+      let currentConversationId = localStorage.getItem("conversationId");
+
+if (!currentConversationId) {
+  currentConversationId = Date.now().toString();
+  localStorage.setItem("conversationId", currentConversationId);
+}
+
+      if (chat.querySelector(".empty-chat")) {
+        chat.innerHTML = "";
+      }
+
+      chat.innerHTML += `
+        <div class="message-row user-row">
+          <div class="bubble user-bubble">${escapeHtml(message)}</div>
+        </div>
+      `;
+      chat.scrollTop = chat.scrollHeight;
+
+      input.value = "";
+
+      const response = await fetch(`${API_BASE}/chat`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          message,
+          companyId,
+          conversationId: currentConversationId
+        })
+      });
+
+      if (!response.ok) {
+  chat.innerHTML += `
+    <div class="message-row bot-row">
+      <div class="bubble bot-bubble">Error sending message</div>
+    </div>
+  `;
+  return;
+}
+
+const data = await response.json();
+
+      chat.innerHTML += `
+  <div class="message-row bot-row">
+    <div>
+      <div class="bubble bot-bubble">${escapeHtml(data.reply || "No reply")}</div>
+
+      <button class="improve-btn" 
+data-reply="${encodeURIComponent(data.reply || "")}"
+data-message="${encodeURIComponent(message)}"
+style="
+  margin-top:5px;
+  font-size:12px;
+  background:#eee;
+  border:none;
+  padding:5px 8px;
+  border-radius:6px;
+  cursor:pointer;
+">
+  Improve AI
+</button>
+
+    </div>
+  </div>
+`;
+      chat.scrollTop = chat.scrollHeight;
+
+      document.getElementById("chatTitle").textContent = localStorage.getItem("selectedLeadEmail") || "Current Chat";
+      document.getElementById("chatSubtitle").textContent = "Latest conversation";
+
+      loadConversations();
+    }
+
+document.addEventListener("click", function (e) {
+  if (e.target.classList.contains("improve-btn")) {
+    const reply = decodeURIComponent(e.target.getAttribute("data-reply"));
+const message = decodeURIComponent(e.target.getAttribute("data-message"));
+improveAI(reply, message, e.target);
+  }
+});
+
+    async function openLeads() {
+      const companyId = getCompanyId();
+      showPage("leadsPage");
+
+      const res = await fetch(`${API_BASE}/leads?companyId=${encodeURIComponent(companyId)}`);
+      const data = await res.json();
+
+      const list = document.getElementById("leadsList");
+      list.innerHTML = "";
+
+      if (!data.length) {
+        list.innerHTML = `<div class="lead-item"><div class="lead-main">No leads yet</div></div>`;
+        return;
+      }
+
+      data.forEach(lead => {
+        const row = document.createElement("div");
+        row.className = "lead-item";
+
+        row.innerHTML = `
+          <div class="lead-main">
+            <div class="lead-name">${escapeHtml(lead.name || "Unknown")}</div>
+            <div class="lead-email">${escapeHtml(lead.email || "")}</div>
+          </div>
+          <div class="lead-actions">
+            <button class="secondary-btn">Open</button>
+            <button class="danger-btn">Delete</button>
+          </div>
+        `;
+
+        const openBtn = row.querySelector(".secondary-btn");
+        const deleteBtn = row.querySelector(".danger-btn");
+        const leadMain = row.querySelector(".lead-main");
+
+        const openLead = () => openLeadChat(lead.email);
+
+        leadMain.onclick = openLead;
+        openBtn.onclick = openLead;
+
+        deleteBtn.onclick = async () => {
+          await deleteLead(lead._id);
+        };
+
+        list.appendChild(row);
+      });
+    }
+
+    async function openLeadChat(email) {
+      const companyId = getCompanyId();
+      localStorage.setItem("selectedLeadEmail", email);
+      showPage("dashboardPage");
+
+      document.getElementById("chatTitle").textContent = email;
+      document.getElementById("chatSubtitle").textContent = "Lead conversation";
+
+      const res = await fetch(`${API_BASE}/lead-conversation?companyId=${encodeURIComponent(companyId)}&email=${encodeURIComponent(email)}`);
+      const messages = await res.json();
+
+      if (messages.length) {
+        localStorage.setItem("conversationId", messages[0].conversationId || Date.now().toString());
+      }
+
+      renderMessages(messages);
+    }
+
+    async function deleteLead(id) {
+      const companyId = getCompanyId();
+
+      await fetch(`${API_BASE}/delete-lead/${id}?companyId=${encodeURIComponent(companyId)}`, {
+        method: "DELETE"
+      });
+
+      openLeads();
+    }
+
+    function openSettings() {
+      showPage("settingsPage");
+    }
+
+    async function uploadPDF() {
+      const companyId = getCompanyId();
+      const fileInput = document.getElementById("pdfInput");
+      const status = document.getElementById("settingsStatus");
+
+      if (!fileInput.files[0]) {
+        alert("Please choose a PDF");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("pdf", fileInput.files[0]);
+      formData.append("companyId", companyId);
+
+      status.textContent = "Uploading PDF...";
+
+      const res = await fetch(`${API_BASE}/upload-pdf`, {
+        method: "POST",
+        body: formData
+      });
+
+      const data = await res.json();
+      status.textContent = data.message || "Done";
+    }
+
+    async function saveWebsite() {
+      const companyId = getCompanyId();
+      const url = document.getElementById("websiteInput").value.trim();
+      const status = document.getElementById("settingsStatus");
+
+      if (!url) {
+        alert("Please enter a website URL");
+        return;
+      }
+
+      status.textContent = "Saving website...";
+
+      const res = await fetch(`${API_BASE}/save-website`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ url, companyId })
+      });
+
+      const data = await res.json();
+      status.textContent = data.message || "Done";
+    }
+
+    document.getElementById("input").addEventListener("keydown", function(e) {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        send();
+      }
+    });
+
+    window.onload = () => {
+  const companyId = localStorage.getItem("companyId");
+  const companyName = localStorage.getItem("companyName");
+
+  if (!companyId || !companyName) {
+    setTopbarVisible(false);
+    showPage("authPage");
+    return;
+  }
+
+  setTopbarVisible(true);
+  document.getElementById("companyLabel").textContent = `Logged in as ${companyName}`;
+  showPage("dashboardPage");
+  loadConversations();
+  resetChatView();
+};
+
+async function saveNotificationEmail() {
+  const companyId = localStorage.getItem("companyId");
+  const email = document.getElementById("notificationEmail").value.trim();
+
+  if (!email) {
+    alert("Please enter an email");
+    return;
+  }
+
+  const res = await fetch(`${API_BASE}/save-notification-email`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ companyId, email })
+  });
+
+  const data = await res.json();
+
+  document.getElementById("emailStatus").innerText =
+    data.message || "Saved!";
+}
+
+setInterval(() => {
+  if (localStorage.getItem("companyId")) {
+    loadConversations();
+  }
+}, 3000);
+
+  </script>
+</body>
+</html>
