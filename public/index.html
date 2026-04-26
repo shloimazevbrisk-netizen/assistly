@@ -888,9 +888,11 @@ const title = name;
   const preview = (convo.message || "No message").slice(0, 60);
 
   div.innerHTML = `
-    <div class="convo-title">${escapeHtml(title)}</div>
-    <div class="convo-sub">${escapeHtml(preview)}</div>
-  `;
+  <div style="font-weight:600;">${escapeHtml(title)}</div>
+  <div style="font-size:12px;color:#666;margin-top:2px;">
+    ${escapeHtml(preview)}
+  </div>
+`;
 
   div.onclick = async () => {
     document.querySelectorAll(".convo").forEach(x => x.classList.remove("active"));
