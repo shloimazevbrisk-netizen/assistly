@@ -1166,6 +1166,13 @@ improveAI(reply, message, e.target);
   loadConversations();
   resetChatView();
 };
+
+setInterval(() => {
+  if (localStorage.getItem("companyId")) {
+    loadConversations();
+  }
+}, 3000);
+
   </script>
 </body>
 </html>
