@@ -281,11 +281,12 @@ await Conversation.create({
 
   if (!existingLead) {
     await Lead.create({
-      companyId,
-      name: name || "Lead",
-      email: emailMatch[0].toLowerCase(),
-      time: new Date().toISOString()
-    });
+  companyId,
+  name,
+  email: emailMatch[0].toLowerCase(),
+  time: new Date().toISOString(),
+  isNew: true
+});
   }
 }
     
