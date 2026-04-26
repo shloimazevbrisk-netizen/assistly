@@ -432,6 +432,22 @@ await Lead.findOneAndDelete({
   res.json({ success: true });
 });
 
+app.post("/save-notification-email", async (req, res) => {
+  const { companyId, email } = req.body;
+
+  if (!companyId || !email) {
+    return res.json({ message: "Missing data" });
+  }
+
+  await CompanyData.findOneAndUpdate(
+    { companyId },
+    { notificationEmail: email },
+    { upsert: true }
+  );
+
+  res.json({ message: "Email saved successfully" });
+});
+
 app.post("/upload-pdf", upload.single("pdf"), async (req, res) => {
   const companyId = req.body.companyId;
 
