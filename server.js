@@ -303,20 +303,26 @@ await Conversation.create({
   isNew: true
 });
 
-const company = await CompanyData.findOne({ companyId });
+try {
+  const company = await CompanyData.findOne({ companyId });
 
-await transporter.sendMail({
-  from: process.env.EMAIL_USER,
-  to: company?.notificationEmail || process.env.EMAIL_USER,
-  subject: "🔥 New Lead from Assistly",
-  text: `
+  await transporter.sendMail({
+    from: process.env.EMAIL_USER,
+    to: company?.notificationEmail || process.env.EMAIL_USER,
+    subject: "🔥 New Lead from Assistly",
+    text: `
 New lead received:
 
 Name: ${name}
 Email: ${emailMatch[0]}
 Message: ${message}
-  `
-});
+    `
+  });
+
+  console.log("EMAIL SENT");
+} catch (err) {
+  console.error("EMAIL ERROR:", err);
+}
   }
 }
     
