@@ -324,10 +324,11 @@ const result = Object.keys(grouped).map(id => {
   const last = messages[messages.length - 1];
 
   return {
-    conversationId: id,
-    email: last.email || "Unknown contact",
-    message: last.message || ""
-  };
+  conversationId: id,
+  email: last.email || "Unknown contact",
+  message: last.message || "",
+  isNew: last.isNew || false
+};
 }).sort((a, b) => Number(b.conversationId) - Number(a.conversationId));
 
 res.json(result);
