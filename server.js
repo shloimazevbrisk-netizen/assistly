@@ -13,6 +13,15 @@ const axios = require("axios");
 const cheerio = require("cheerio");
 const https = require("https");
 const mongoose = require("mongoose");
+const nodemailer = require("nodemailer");
+
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
+  }
+});
 
 const app = express();
 
