@@ -26,6 +26,7 @@ const Conversation = mongoose.model("Conversation", {
   message: String,
   reply: String,
   email: String,
+  name: String,
   time: String
 });
 
