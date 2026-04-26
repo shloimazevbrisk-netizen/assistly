@@ -861,57 +861,52 @@ async function improveAI(reply, message, buttonElement) {
         return;
       }
 
-      const seenEmails = new Set();
+      const latestByEmail = {};
 
 data.forEach(convo => {
-  const email = convo.email || "Unknown contact";
+  const email = convo.email;
+  if (!email) return;
 
-  // ❌ skip "Unknown contact" IF we already have real email for that person
-  if (email === "Unknown contact") {
-    return;
+  // keep ONLY latest conversation per email
+  if (!latestByEmail[email] || convo.conversationId > latestByEmail[email].conversationId) {
+    latestByEmail[email] = convo;
   }
+});
 
-  // ❌ prevent duplicates
-  if (seenEmails.has(email)) {
-    return;
-  }
-  seenEmails.add(email);
-
+Object.values(latestByEmail).forEach(convo => {
   const div = document.createElement("div");
   div.className = "convo";
 
   const name = convo.name && convo.name !== "Unknown"
-  ? convo.name
-  : email;
+    ? convo.name
+    : convo.email;
 
-const title = name;
   const preview = (convo.message || "No message").slice(0, 60);
 
   div.innerHTML = `
-  <div style="font-weight:600; display:flex; justify-content:space-between; align-items:center;">
-  <span>${escapeHtml(title)}</span>
-  ${convo.isNew ? '<span style="color:red;font-size:11px;">🔥 NEW</span>' : ''}
-</div>
-  <div style="font-size:12px;color:#666;margin-top:2px;">
-    ${escapeHtml(preview)}
-  </div>
-`;
+    <div style="font-weight:600;">
+      ${escapeHtml(name)}
+    </div>
+    <div style="font-size:12px;color:#666;margin-top:2px;">
+      ${escapeHtml(preview)}
+    </div>
+  `;
 
   div.onclick = async () => {
     document.querySelectorAll(".convo").forEach(x => x.classList.remove("active"));
     div.classList.add("active");
 
-    document.getElementById("chatTitle").textContent = title;
+    document.getElementById("chatTitle").textContent = name;
     document.getElementById("chatSubtitle").textContent = "Conversation history";
 
-    // 🔥 IMPORTANT: always load FULL history by email
     const res2 = await fetch(
-      `${API_BASE}/lead-conversation?companyId=${encodeURIComponent(companyId)}&email=${encodeURIComponent(email)}`
+      `${API_BASE}/lead-conversation?companyId=${encodeURIComponent(getCompanyId())}&email=${encodeURIComponent(convo.email)}`
     );
 
     const messages = await res2.json();
 
-    localStorage.setItem("selectedLeadEmail", email);
+    localStorage.setItem("selectedLeadEmail", convo.email);
+
     if (messages.length) {
       localStorage.setItem("conversationId", messages[0].conversationId);
     }
