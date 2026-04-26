@@ -881,7 +881,7 @@ data.forEach(convo => {
   div.className = "convo";
 
   const title = email;
-  const preview = convo.message || "No message";
+  const preview = (convo.message || "No message").slice(0, 60);
 
   div.innerHTML = `
     <div class="convo-title">${escapeHtml(title)}</div>
