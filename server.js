@@ -298,6 +298,19 @@ await Conversation.create({
   time: new Date().toISOString(),
   isNew: true
 });
+
+await transporter.sendMail({
+  from: process.env.EMAIL_USER,
+  to: process.env.EMAIL_USER,
+  subject: "🔥 New Lead from Assistly",
+  text: `
+New lead received:
+
+Name: ${name}
+Email: ${emailMatch[0]}
+Message: ${message}
+  `
+});
   }
 }
     
