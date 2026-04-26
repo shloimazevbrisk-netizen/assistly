@@ -861,38 +861,57 @@ async function improveAI(reply, message, buttonElement) {
         return;
       }
 
-      data.forEach(convo => {
-        const div = document.createElement("div");
-        div.className = "convo";
+      const seenEmails = new Set();
 
-        const title = convo.email || "Unknown contact";
-        const preview = convo.message || "No message";
+data.forEach(convo => {
+  const email = convo.email || "Unknown contact";
 
-        div.innerHTML = `
-          <div class="convo-title">${escapeHtml(title)}</div>
-          <div class="convo-sub">${escapeHtml(preview)}</div>
-        `;
+  // ❌ skip "Unknown contact" IF we already have real email for that person
+  if (email === "Unknown contact") {
+    return;
+  }
 
-        div.onclick = async () => {
-          document.querySelectorAll(".convo").forEach(x => x.classList.remove("active"));
-          div.classList.add("active");
+  // ❌ prevent duplicates
+  if (seenEmails.has(email)) {
+    return;
+  }
+  seenEmails.add(email);
 
-          document.getElementById("chatTitle").textContent = title;
-          document.getElementById("chatSubtitle").textContent = "Conversation history";
+  const div = document.createElement("div");
+  div.className = "convo";
 
-          const res2 = await fetch(
-            `${API_BASE}/conversation-messages?companyId=${encodeURIComponent(companyId)}&conversationId=${encodeURIComponent(convo.conversationId)}`
-          );
-          const messages = await res2.json();
+  const title = email;
+  const preview = convo.message || "No message";
 
-          localStorage.setItem("conversationId", convo.conversationId);
-          localStorage.setItem("selectedLeadEmail", title);
+  div.innerHTML = `
+    <div class="convo-title">${escapeHtml(title)}</div>
+    <div class="convo-sub">${escapeHtml(preview)}</div>
+  `;
 
-          renderMessages(messages);
-        };
+  div.onclick = async () => {
+    document.querySelectorAll(".convo").forEach(x => x.classList.remove("active"));
+    div.classList.add("active");
 
-        list.appendChild(div);
-      });
+    document.getElementById("chatTitle").textContent = title;
+    document.getElementById("chatSubtitle").textContent = "Conversation history";
+
+    // 🔥 IMPORTANT: always load FULL history by email
+    const res2 = await fetch(
+      `${API_BASE}/lead-conversation?companyId=${encodeURIComponent(companyId)}&email=${encodeURIComponent(email)}`
+    );
+
+    const messages = await res2.json();
+
+    localStorage.setItem("selectedLeadEmail", email);
+    if (messages.length) {
+      localStorage.setItem("conversationId", messages[0].conversationId);
+    }
+
+    renderMessages(messages);
+  };
+
+  list.appendChild(div);
+});
     }
 
     async function send() {
