@@ -880,7 +880,11 @@ data.forEach(convo => {
   const div = document.createElement("div");
   div.className = "convo";
 
-  const title = email;
+  const name = convo.name && convo.name !== "Unknown"
+  ? convo.name
+  : email;
+
+const title = name;
   const preview = (convo.message || "No message").slice(0, 60);
 
   div.innerHTML = `
