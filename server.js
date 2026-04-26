@@ -39,11 +39,14 @@ const Conversation = mongoose.model("Conversation", {
   time: String
 });
 
-const CompanyData = mongoose.model("CompanyData", {
-  companyId: String,
-  knowledge: String
-  notificationEmail: String,
-});
+const CompanyData = mongoose.model(
+  "CompanyData",
+  new mongoose.Schema({
+    companyId: String,
+    knowledge: String,
+    notificationEmail: String
+  })
+);
 
 const AIFix = mongoose.model("AIFix", {
   companyId: String,
