@@ -354,12 +354,23 @@ app.get("/lead-conversation", async (req, res) => {
     return res.status(400).json({ message: "companyId and email are required" });
   }
 
-  const messages = await Conversation.find({
-    companyId,
-    email: email.toLowerCase()
-  }).sort({ time: 1 });
+  const allMessages = await Conversation.find({ companyId }).sort({ time: 1 });
 
-  res.json(messages);
+// find all conversationIds that belong to this email
+const conversationIds = new Set();
+
+allMessages.forEach(msg => {
+  if (msg.email === email.toLowerCase()) {
+    conversationIds.add(msg.conversationId);
+  }
+});
+
+// now get FULL history of those conversations
+const fullHistory = allMessages.filter(msg =>
+  conversationIds.has(msg.conversationId)
+);
+
+res.json(fullHistory);
 });
 
 app.get("/leads", async (req, res) => {
