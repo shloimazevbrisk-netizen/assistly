@@ -42,6 +42,7 @@ const Conversation = mongoose.model("Conversation", {
 const CompanyData = mongoose.model("CompanyData", {
   companyId: String,
   knowledge: String
+  notificationEmail: String,
 });
 
 const AIFix = mongoose.model("AIFix", {
