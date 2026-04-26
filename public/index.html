@@ -1186,6 +1186,29 @@ improveAI(reply, message, e.target);
   resetChatView();
 };
 
+async function saveNotificationEmail() {
+  const companyId = localStorage.getItem("companyId");
+  const email = document.getElementById("notificationEmail").value.trim();
+
+  if (!email) {
+    alert("Please enter an email");
+    return;
+  }
+
+  const res = await fetch(`${API_BASE}/save-notification-email`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ companyId, email })
+  });
+
+  const data = await res.json();
+
+  document.getElementById("emailStatus").innerText =
+    data.message || "Saved!";
+}
+
 setInterval(() => {
   if (localStorage.getItem("companyId")) {
     loadConversations();
