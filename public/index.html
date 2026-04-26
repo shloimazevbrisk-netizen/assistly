@@ -900,13 +900,25 @@ Object.values(latestByEmail).forEach(convo => {
     document.getElementById("chatTitle").textContent = name;
     document.getElementById("chatSubtitle").textContent = "Conversation history";
 
-    const res2 = await fetch(
-      `${API_BASE}/lead-conversation?companyId=${encodeURIComponent(getCompanyId())}&email=${encodeURIComponent(convo.email)}`
-    );
+    let messages = [];
 
-    const messages = await res2.json();
+if (convo.email && convo.email !== "Unknown contact") {
+  // lead with email
+  const res2 = await fetch(
+    `${API_BASE}/lead-conversation?companyId=${encodeURIComponent(getCompanyId())}&email=${encodeURIComponent(convo.email)}`
+  );
+  messages = await res2.json();
 
-    localStorage.setItem("selectedLeadEmail", convo.email);
+  localStorage.setItem("selectedLeadEmail", convo.email);
+} else {
+  // anonymous chat
+  const res2 = await fetch(
+    `${API_BASE}/conversation-messages?companyId=${encodeURIComponent(getCompanyId())}&conversationId=${encodeURIComponent(convo.conversationId)}`
+  );
+  messages = await res2.json();
+
+  localStorage.removeItem("selectedLeadEmail");
+}
 
     if (messages.length) {
       localStorage.setItem("conversationId", messages[0].conversationId);
