@@ -269,6 +269,7 @@ await Conversation.create({
   message,
   reply: answer,
   email: emailMatch ? emailMatch[0].toLowerCase() : null,
+  name: name || null,
   time: new Date().toISOString()
 });
 
@@ -326,6 +327,7 @@ const result = Object.keys(grouped).map(id => {
   return {
   conversationId: id,
   email: last.email || "Unknown contact",
+  name: last.name || "",
   message: last.message || "",
   isNew: last.isNew || false
 };
