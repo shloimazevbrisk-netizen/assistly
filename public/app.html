@@ -893,7 +893,7 @@ Object.values(latestByEmail).forEach(convo => {
   div.innerHTML = `
   <div style="font-weight:600; display:flex; justify-content:space-between;">
     <span>${escapeHtml(name)}</span>
-    ${convo.isNew ? '<span style="color:red;font-size:11px;">🔥 NEW</span>' : ''}
+    ${convo.isUnread ? '<span style="color:red;font-size:11px;">🔥 NEW</span>' : ''}
   </div>
   <div style="font-size:12px;color:#666;margin-top:2px;">
     ${escapeHtml(preview)}
@@ -902,7 +902,7 @@ Object.values(latestByEmail).forEach(convo => {
 
   div.onclick = async () => {
 
-      convo.isNew = false;
+      convo.isUnread = false;
 
     document.querySelectorAll(".convo").forEach(x => x.classList.remove("active"));
     div.classList.add("active");
