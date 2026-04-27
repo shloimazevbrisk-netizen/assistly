@@ -660,22 +660,6 @@ fetch("https://assistlychat.com/chat", {
   if (data.conversationId) {
     window.assistlyConversationId = data.conversationId;
   }
-
-  // 🔥 ONLY show AI reply (not human messages)
-  if (data.reply) {
-    const reply = document.createElement("div");
-    reply.innerText = data.reply;
-
-    reply.style.padding = "8px";
-    reply.style.margin = "5px";
-    reply.style.background = "#4f46e5";
-    reply.style.color = "white";
-    reply.style.borderRadius = "8px";
-
-    const messagesDiv = chatBox.querySelector("#assistly-messages");
-    messagesDiv.appendChild(reply);
-    messagesDiv.scrollTop = messagesDiv.scrollHeight;
-  }
 });
   }
 });
