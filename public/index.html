@@ -222,5 +222,39 @@ function scrollToDemo() {
 }
 </script>
 
+<div id="livePopup" style="
+  position:fixed;
+  bottom:20px;
+  left:20px;
+  background:white;
+  padding:12px 16px;
+  border-radius:10px;
+  box-shadow:0 10px 25px rgba(0,0,0,0.15);
+  font-size:14px;
+  display:none;
+  z-index:999;
+">
+  🔥 New lead from John
+</div>
+
+<script>
+const names = ["John", "David", "Michael", "Sarah", "Daniel", "Chris"];
+
+function showPopup() {
+  const popup = document.getElementById("livePopup");
+
+  const name = names[Math.floor(Math.random() * names.length)];
+  popup.innerText = `🔥 New lead from ${name}`;
+
+  popup.style.display = "block";
+
+  setTimeout(() => {
+    popup.style.display = "none";
+  }, 3000);
+}
+
+setInterval(showPopup, 6000);
+</script>
+
 </body>
 </html>
