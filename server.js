@@ -634,6 +634,31 @@ input.addEventListener("keypress", function (e) {
 if (!msg) return;
 
 const messagesDiv = chatBox.querySelector("#assistly-messages");
+
+// ✅ SHOW USER MESSAGE IMMEDIATELY
+const userRow = document.createElement("div");
+userRow.style.width = "100%";
+userRow.style.display = "flex";
+userRow.style.justifyContent = "flex-start";
+userRow.style.margin = "6px 0";
+
+const userBubble = document.createElement("div");
+userBubble.innerText = msg;
+userBubble.style.padding = "9px 11px";
+userBubble.style.borderRadius = "10px";
+userBubble.style.maxWidth = "82%";
+userBubble.style.background = "#eee";
+userBubble.style.color = "#111";
+
+userRow.appendChild(userBubble);
+messagesDiv.appendChild(userRow);
+
+// scroll down
+messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+input.value = "";
+
+const messagesDiv = chatBox.querySelector("#assistly-messages");
 messagesDiv.scrollTop = messagesDiv.scrollHeight;
 
 input.value = "";
