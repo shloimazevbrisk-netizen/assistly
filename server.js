@@ -715,35 +715,33 @@ messagesDiv.style.alignItems = "stretch";
 messagesDiv.innerHTML = "";
 
      messages.forEach(msg => {
-  const div = document.createElement("div");
+  const row = document.createElement("div");
+  row.style.width = "100%";
+  row.style.display = "flex";
+  row.style.margin = "6px 0";
 
-  div.style.padding = "8px";
-  div.style.margin = "5px";
-div.style.width = "fit-content";
-  div.style.borderRadius = "8px";
-  div.style.maxWidth = "80%";
-div.style.display = "block";
-div.style.wordWrap = "break-word";
+  const bubble = document.createElement("div");
+  bubble.style.padding = "9px 11px";
+  bubble.style.borderRadius = "10px";
+  bubble.style.maxWidth = "82%";
+  bubble.style.wordBreak = "break-word";
+  bubble.style.lineHeight = "1.35";
+  bubble.style.fontSize = "14px";
 
-  // 🔥 COMPANY MESSAGE (AI OR HUMAN)
   if (msg.reply) {
-    div.innerText = msg.reply;
-    div.style.background = "#4f46e5";
-    div.style.color = "white";
-    div.style.alignSelf = "flex-end";
-div.style.marginLeft = "auto";
-div.style.textAlign = "left";
-  } 
-  // 👤 VISITOR MESSAGE
-  else {
-    div.innerText = msg.message;
-    div.style.background = "#eee";
-    div.style.alignSelf = "flex-start";
-div.style.marginRight = "auto";
-div.style.textAlign = "left";
+    row.style.justifyContent = "flex-end";
+    bubble.innerText = msg.reply;
+    bubble.style.background = "#4f46e5";
+    bubble.style.color = "white";
+  } else {
+    row.style.justifyContent = "flex-start";
+    bubble.innerText = msg.message;
+    bubble.style.background = "#eee";
+    bubble.style.color = "#111";
   }
 
-  messagesDiv.appendChild(div);
+  row.appendChild(bubble);
+  messagesDiv.appendChild(row);
 });
 
       messagesDiv.scrollTop = messagesDiv.scrollHeight;
