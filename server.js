@@ -746,6 +746,26 @@ app.post("/toggle-ai", async (req, res) => {
   res.json({ success: true });
 });
 
+app.post("/human-reply", async (req, res) => {
+  const { companyId, conversationId, message } = req.body;
+
+  if (!companyId || !conversationId || !message) {
+    return res.status(400).json({ message: "Missing fields" });
+  }
+
+  await Conversation.create({
+    companyId,
+    conversationId,
+    message: "",
+    reply: message,
+    time: new Date().toISOString(),
+    isUnread: false,
+    aiActive: false
+  });
+
+  res.json({ success: true });
+});
+
 const PORT = process.env.PORT || 3001;
 
 app.listen(PORT, "0.0.0.0", () => {
