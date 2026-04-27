@@ -5,75 +5,92 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f5f7fb;
-      color: #111;
-    }
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f5f7fb;
+  color: #111;
+}
 
-    .hero {
-      text-align: center;
-      padding: 100px 20px;
-      background: linear-gradient(135deg, #5b5fff, #7b3fff);
-      color: white;
-    }
+/* HERO */
+.hero {
+  text-align: center;
+  padding: 120px 20px;
+  background: linear-gradient(135deg, #5b5fff, #7b3fff);
+  color: white;
+}
 
-    .hero h1 {
-      font-size: 42px;
-      margin-bottom: 20px;
-    }
+.hero h1 {
+  font-size: 48px;
+  margin-bottom: 20px;
+}
 
-    .hero p {
-      font-size: 18px;
-      opacity: 0.9;
-    }
+.hero p {
+  font-size: 20px;
+  opacity: 0.9;
+}
 
-    .cta button {
-      margin-top: 25px;
-      padding: 14px 28px;
-      font-size: 16px;
-      border: none;
-      border-radius: 8px;
-      background: white;
-      color: #5b5fff;
-      cursor: pointer;
-      font-weight: bold;
-    }
+/* BUTTONS */
+.cta button {
+  padding: 14px 28px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+}
 
-    .section {
-      padding: 60px 20px;
-      text-align: center;
-    }
+/* SECTIONS */
+.section {
+  padding: 80px 20px;
+}
 
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
-      margin-top: 30px;
-    }
+.section h2 {
+  font-size: 32px;
+  margin-bottom: 10px;
+}
 
-    .card {
-      background: white;
-      padding: 25px;
-      border-radius: 10px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-    }
+/* CARDS */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 25px;
+  margin-top: 40px;
+}
 
-    .pricing {
-      background: #111;
-      color: white;
-      padding: 60px 20px;
-      text-align: center;
-    }
+.card {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+  transition: 0.2s;
+}
 
-    .footer {
-      text-align: center;
-      padding: 30px;
-      font-size: 14px;
-      color: #777;
-    }
-  </style>
+.card:hover {
+  transform: translateY(-5px);
+}
+
+/* PRICING */
+.pricing {
+  background: #111;
+  color: white;
+  padding: 80px 20px;
+  text-align: center;
+}
+
+.pricing h1 {
+  font-size: 48px;
+  margin: 10px 0;
+}
+
+/* FOOTER */
+.footer {
+  text-align: center;
+  padding: 40px;
+  font-size: 14px;
+  color: #777;
+}
+</style>
 </head>
 
 <body>
