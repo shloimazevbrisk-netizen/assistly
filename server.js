@@ -631,71 +631,69 @@ const input = chatBox.querySelector("#assistly-input");
 input.addEventListener("keypress", function (e) {
   if (e.key === "Enter") {
     const msg = input.value;
-if (!msg) return;
+    if (!msg) return;
 
-const messagesDiv = chatBox.querySelector("#assistly-messages");
+    const messagesDiv = chatBox.querySelector("#assistly-messages");
 
-// ✅ SHOW USER MESSAGE IMMEDIATELY
-const userRow = document.createElement("div");
-userRow.style.width = "100%";
-userRow.style.display = "flex";
-userRow.style.justifyContent = "flex-start";
-userRow.style.margin = "6px 0";
+    // ✅ SHOW USER MESSAGE
+    const userRow = document.createElement("div");
+    userRow.style.width = "100%";
+    userRow.style.display = "flex";
+    userRow.style.justifyContent = "flex-start";
+    userRow.style.margin = "6px 0";
 
-const userBubble = document.createElement("div");
-userBubble.innerText = msg;
-userBubble.style.padding = "9px 11px";
-userBubble.style.borderRadius = "10px";
-userBubble.style.maxWidth = "82%";
-userBubble.style.background = "#eee";
-userBubble.style.color = "#111";
+    const userBubble = document.createElement("div");
+    userBubble.innerText = msg;
+    userBubble.style.padding = "9px 11px";
+    userBubble.style.borderRadius = "10px";
+    userBubble.style.maxWidth = "82%";
+    userBubble.style.background = "#eee";
+    userBubble.style.color = "#111";
 
-userRow.appendChild(userBubble);
-messagesDiv.appendChild(userRow);
+    userRow.appendChild(userBubble);
+    messagesDiv.appendChild(userRow);
 
-// scroll down
-messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    // scroll
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
 
-input.value = "";
+    // clear input
+    input.value = "";
 
-const messagesDiv = chatBox.querySelector("#assistly-messages");
-messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    // GET companyId
+    let companyId = null;
+    const scripts = document.getElementsByTagName("script");
 
-input.value = "";
+    for (let s of scripts) {
+      if (s.src.includes("widget.js") && s.getAttribute("data-company")) {
+        companyId = s.getAttribute("data-company");
+      }
+    }
 
-// send to backend
-let companyId = null;
+    if (!companyId) {
+      console.error("Assistly: Missing data-company attribute");
+      return;
+    }
 
-const scripts = document.getElementsByTagName("script");
+    let conversationId = window.assistlyConversationId || null;
 
-for (let s of scripts) {
-  if (s.src.includes("widget.js") && s.getAttribute("data-company")) {
-    companyId = s.getAttribute("data-company");
-  }
-}
-
-if (!companyId) {
-  console.error("Assistly: Missing data-company attribute on widget script");
-  return;
-}
-
-let conversationId = window.assistlyConversationId || null;
-
-fetch("https://assistlychat.com/chat", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({
-  message: msg,
-  companyId: companyId,
-  conversationId: conversationId
-})
-})
-.then(res => res.json())
-.then(data => {
-  if (data.conversationId) {
-    window.assistlyConversationId = data.conversationId;
+    // SEND TO BACKEND
+    fetch("https://assistlychat.com/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        message: msg,
+        companyId: companyId,
+        conversationId: conversationId
+      })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.conversationId) {
+        window.assistlyConversationId = data.conversationId;
+      }
+    });
   }
 });
   }
