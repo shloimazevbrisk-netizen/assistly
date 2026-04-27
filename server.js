@@ -227,11 +227,6 @@ if (!name && emailMatch) {
 }
 
   try {
-const lastMessage = await Conversation.findOne({
-  companyId,
-  conversationId: finalConversationId
-}).sort({ time: -1 });
-
 if (lastMessage && lastMessage.aiActive === false) {
   await Conversation.create({
     companyId,
@@ -288,6 +283,28 @@ Email: ${emailMatch ? emailMatch[0] : "not provided"}
     const answer = response.choices[0].message.content;
 
     let finalConversationId = conversationId;
+
+const lastMessage = await Conversation.findOne({
+  companyId,
+  conversationId: finalConversationId
+}).sort({ time: -1 });
+
+if (lastMessage && lastMessage.aiActive === false) {
+  await Conversation.create({
+    companyId,
+    conversationId: finalConversationId,
+    message,
+    reply: "",
+    time: new Date().toISOString(),
+    isUnread: true,
+    aiActive: false
+  });
+
+  return res.json({
+    reply: "",
+    conversationId: finalConversationId
+  });
+}
 
 if (!finalConversationId && emailMatch) {
   const existingConversation = await Conversation.findOne({
@@ -691,6 +708,17 @@ messagesDiv.scrollTop = messagesDiv.scrollHeight;
   document.body.appendChild(chatBox);
 })();
 `);
+});
+
+app.post("/toggle-ai", async (req, res) => {
+  const { companyId, conversationId, aiActive } = req.body;
+
+  await Conversation.updateMany(
+    { companyId, conversationId },
+    { $set: { aiActive } }
+  );
+
+  res.json({ success: true });
 });
 
 const PORT = process.env.PORT || 3001;
