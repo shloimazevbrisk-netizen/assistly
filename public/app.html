@@ -488,7 +488,8 @@
 
         <div class="input-bar">
           <input id="input" placeholder="Type your message..." />
-          <button onclick="send()">Send</button>
+          <button id="toggleAIBtn" onclick="toggleAI()">Take Over AI</button>
+<button onclick="send()">Send</button>
         </div>
       </div>
     </div>
@@ -976,16 +977,17 @@ if (!currentConversationId) {
       input.value = "";
 
       const response = await fetch(`${API_BASE}/chat`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          message,
-          companyId,
-          conversationId: currentConversationId
-        })
-      });
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    message,
+    companyId,
+    conversationId: currentConversationId,
+    human: !aiActive 
+  })
+});
 
       if (!response.ok) {
   chat.innerHTML += `
@@ -1217,6 +1219,37 @@ setInterval(() => {
     loadConversations();
   }
 }, 3000);
+
+let aiActive = true;
+
+async function toggleAI() {
+  aiActive = !aiActive;
+
+  const btn = document.getElementById("toggleAIBtn");
+
+  if (!aiActive) {
+    btn.innerText = "Turn AI Back On";
+  } else {
+    btn.innerText = "Take Over AI";
+  }
+
+  const conversationId = localStorage.getItem("conversationId");
+  const companyId = localStorage.getItem("companyId");
+
+  if (!conversationId || !companyId) return;
+
+  await fetch(`${API_BASE}/toggle-ai`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      companyId,
+      conversationId,
+      aiActive
+    })
+  });
+}
 
   </script>
 </body>
