@@ -284,7 +284,9 @@ await Conversation.create({
   reply: answer,
   email: emailMatch ? emailMatch[0].toLowerCase() : null,
   name: name || null,
-  time: new Date().toISOString()
+  time: new Date().toISOString(),
+
+  isNew: true
 });
 
 
