@@ -79,11 +79,22 @@
 <body>
 
 <div class="hero">
-  <h1>Turn Website Visitors Into Leads — Automatically</h1>
-  <p>Assistly chats with your visitors, answers questions, and captures real leads.</p>
+  <h1 style="font-size:48px; font-weight:700;">
+    Turn Website Visitors Into Paying Clients
+  </h1>
 
-  <div class="cta">
-    <button onclick="window.location.href='/app.html'">Get Started</button>
+  <p style="font-size:20px; margin-top:15px; opacity:0.9;">
+    Assistly talks to your visitors, answers their questions, and captures real leads — automatically.
+  </p>
+
+  <div class="cta" style="margin-top:35px;">
+    <button onclick="window.location.href='/app.html'" style="margin-right:10px;">
+      Start Free Trial
+    </button>
+
+    <button onclick="scrollToDemo()" style="background:transparent; border:1px solid white; color:white;">
+      See How It Works
+    </button>
   </div>
 </div>
 
@@ -122,6 +133,12 @@
 <div class="footer">
   © Assistly — Built to grow your business
 </div>
+
+<script>
+function scrollToDemo() {
+  document.querySelector(".section").scrollIntoView({ behavior: "smooth" });
+}
+</script>
 
 </body>
 </html>
