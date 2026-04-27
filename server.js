@@ -37,7 +37,7 @@ const Conversation = mongoose.model("Conversation", {
   email: String,
   name: String,
   time: String,
-  isNew: Boolean 
+  isUnread: Boolean
 });
 
 const CompanyData = mongoose.model(
@@ -60,7 +60,7 @@ const Lead = mongoose.model("Lead", {
   name: String,
   email: String,
   time: String,
-  isNew: Boolean 
+  isUnread: Boolean
 });
 
 const upload = multer({ dest: "uploads/" });
@@ -288,7 +288,7 @@ await Conversation.create({
   name: name || null,
   time: new Date().toISOString(),
 
-  isNew: true
+  isUnread: true
 });
 
 
@@ -304,7 +304,7 @@ await Conversation.create({
   name,
   email: emailMatch[0].toLowerCase(),
   time: new Date().toISOString(),
-  isNew: true
+  isUnread: true
 });
 
 try {
@@ -368,7 +368,7 @@ const result = Object.keys(grouped).map(id => {
   email: last.email || "Unknown contact",
   name: last.name || "",
   message: last.message || "",
-  isNew: last.isNew || false
+  isUnread: last.isUnread || false
 };
 }).sort((a, b) => Number(b.conversationId) - Number(a.conversationId));
 
