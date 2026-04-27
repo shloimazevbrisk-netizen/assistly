@@ -290,15 +290,7 @@ if (lastMessage && lastMessage.aiActive === false) {
 }
 
 if (!finalConversationId) {
-  const lastConversation = await Conversation.findOne({
-    companyId
-  }).sort({ time: -1 });
-
-  if (lastConversation) {
-    finalConversationId = lastConversation.conversationId;
-  } else {
-    finalConversationId = Date.now().toString();
-  }
+  finalConversationId = Date.now().toString();
 }
 
 if (!finalConversationId) {
