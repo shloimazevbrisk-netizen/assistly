@@ -37,7 +37,11 @@ const Conversation = mongoose.model("Conversation", {
   email: String,
   name: String,
   time: String,
-  isUnread: Boolean
+  isUnread: Boolean,
+  aiActive: {
+    type: Boolean,
+    default: true
+  }
 });
 
 const CompanyData = mongoose.model(
@@ -223,6 +227,27 @@ if (!name && emailMatch) {
 }
 
   try {
+const lastMessage = await Conversation.findOne({
+  companyId,
+  conversationId: finalConversationId
+}).sort({ time: -1 });
+
+if (lastMessage && lastMessage.aiActive === false) {
+  await Conversation.create({
+    companyId,
+    conversationId: finalConversationId,
+    message,
+    reply: "",
+    time: new Date().toISOString(),
+    isUnread: true,
+    aiActive: false
+  });
+
+  return res.json({
+    reply: "",
+    conversationId: finalConversationId
+  });
+}
     const response = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
