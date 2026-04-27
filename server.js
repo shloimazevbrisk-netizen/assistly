@@ -708,25 +708,38 @@ setInterval(() => {
     .then(messages => {
       const messagesDiv = chatBox.querySelector("#assistly-messages");
 
+messagesDiv.style.display = "flex";
+messagesDiv.style.flexDirection = "column";
+
       messagesDiv.innerHTML = "";
 
-      messages.forEach(msg => {
-        const div = document.createElement("div");
-        div.innerText = msg.reply || msg.message;
+     messages.forEach(msg => {
+  const div = document.createElement("div");
 
-        div.style.padding = "8px";
-        div.style.margin = "5px";
-        div.style.borderRadius = "8px";
+  div.style.padding = "8px";
+  div.style.margin = "5px";
+  div.style.borderRadius = "8px";
+  div.style.maxWidth = "70%";
+  div.style.display = "inline-block";
 
-        if (msg.reply) {
-          div.style.background = "#4f46e5";
-          div.style.color = "white";
-        } else {
-          div.style.background = "#eee";
-        }
+  // 🔥 COMPANY MESSAGE (AI OR HUMAN)
+  if (msg.reply) {
+    div.innerText = msg.reply;
+    div.style.background = "#4f46e5";
+    div.style.color = "white";
+    div.style.alignSelf = "flex-end";
+    div.style.marginLeft = "auto";
+  } 
+  // 👤 VISITOR MESSAGE
+  else {
+    div.innerText = msg.message;
+    div.style.background = "#eee";
+    div.style.alignSelf = "flex-start";
+    div.style.marginRight = "auto";
+  }
 
-        messagesDiv.appendChild(div);
-      });
+  messagesDiv.appendChild(div);
+});
 
       messagesDiv.scrollTop = messagesDiv.scrollHeight;
     });
