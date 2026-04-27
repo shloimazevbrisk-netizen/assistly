@@ -357,13 +357,9 @@ Message: ${message}
     
 
     res.json({
-      reply: answer,
-      conversationId: finalConversationId
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Error generating reply" });
-  }
+  reply: answer,
+  conversationId: finalConversationId
+});
 });
 
 app.get("/conversations", async (req, res) => {
