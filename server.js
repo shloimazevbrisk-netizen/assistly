@@ -387,6 +387,11 @@ app.get("/conversation-messages", async (req, res) => {
   conversationId
 }).sort({ time: 1 });
 
+await Conversation.updateMany(
+  { companyId, conversationId },
+  { $set: { isUnread: false } }
+);
+
 res.json(messages);
 });
 
