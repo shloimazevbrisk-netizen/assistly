@@ -710,8 +710,9 @@ setInterval(() => {
 
 messagesDiv.style.display = "flex";
 messagesDiv.style.flexDirection = "column";
+messagesDiv.style.alignItems = "stretch";
 
-      messagesDiv.innerHTML = "";
+messagesDiv.innerHTML = "";
 
      messages.forEach(msg => {
   const div = document.createElement("div");
