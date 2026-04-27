@@ -682,6 +682,7 @@ fetch("https://assistlychat.com/chat", {
 
   document.body.appendChild(button);
   document.body.appendChild(chatBox);
+  let lastRenderedCount = 0;
 setInterval(() => {
   if (!window.assistlyConversationId) return;
 
@@ -705,7 +706,7 @@ messagesDiv.style.display = "flex";
 messagesDiv.style.flexDirection = "column";
 messagesDiv.style.alignItems = "stretch";
 
-     messages.forEach(msg => {
+     messages.slice(lastRenderedCount).forEach(msg => {
   const row = document.createElement("div");
   row.style.width = "100%";
   row.style.display = "flex";
@@ -734,6 +735,8 @@ messagesDiv.style.alignItems = "stretch";
   row.appendChild(bubble);
   messagesDiv.appendChild(row);
 });
+
+lastRenderedCount = messages.length;
 
       messagesDiv.scrollTop = messagesDiv.scrollHeight;
     });
