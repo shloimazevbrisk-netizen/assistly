@@ -664,27 +664,73 @@ fetch("https://assistlychat.com/chat", {
 })
 .then(res => res.json())
 .then(data => {
-if (data.conversationId) {
-  window.assistlyConversationId = data.conversationId;
-}
-  const reply = document.createElement("div");
-  reply.innerText = data.reply || data.message;
-  reply.style.padding = "8px";
-  reply.style.margin = "5px";
-  reply.style.background = "#4f46e5";
-  reply.style.color = "white";
-  reply.style.borderRadius = "8px";
+  if (data.conversationId) {
+    window.assistlyConversationId = data.conversationId;
+  }
 
-  const messagesDiv = chatBox.querySelector("#assistly-messages");
-messagesDiv.appendChild(reply);
-messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  // 🔥 ONLY show AI reply (not human messages)
+  if (data.reply) {
+    const reply = document.createElement("div");
+    reply.innerText = data.reply;
+
+    reply.style.padding = "8px";
+    reply.style.margin = "5px";
+    reply.style.background = "#4f46e5";
+    reply.style.color = "white";
+    reply.style.borderRadius = "8px";
+
+    const messagesDiv = chatBox.querySelector("#assistly-messages");
+    messagesDiv.appendChild(reply);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  }
 });
-
   }
 });
 
   document.body.appendChild(button);
   document.body.appendChild(chatBox);
+setInterval(() => {
+  if (!window.assistlyConversationId) return;
+
+  let companyId = null;
+
+  const scripts = document.getElementsByTagName("script");
+  for (let s of scripts) {
+    if (s.src.includes("widget.js") && s.getAttribute("data-company")) {
+      companyId = s.getAttribute("data-company");
+    }
+  }
+
+  if (!companyId) return;
+
+  fetch("https://assistlychat.com/conversation-messages?companyId=" + companyId + "&conversationId=" + window.assistlyConversationId)
+    .then(res => res.json())
+    .then(messages => {
+      const messagesDiv = chatBox.querySelector("#assistly-messages");
+
+      messagesDiv.innerHTML = "";
+
+      messages.forEach(msg => {
+        const div = document.createElement("div");
+        div.innerText = msg.reply || msg.message;
+
+        div.style.padding = "8px";
+        div.style.margin = "5px";
+        div.style.borderRadius = "8px";
+
+        if (msg.reply) {
+          div.style.background = "#4f46e5";
+          div.style.color = "white";
+        } else {
+          div.style.background = "#eee";
+        }
+
+        messagesDiv.appendChild(div);
+      });
+
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    });
+}, 2000);
 })();
 `);
 });
