@@ -267,34 +267,37 @@ Email: ${emailMatch ? emailMatch[0] : "not provided"}
 
     let finalConversationId = conversationId;
 
-const lastMessage = await Conversation.findOne({
-  companyId,
-  conversationId: finalConversationId
-}).sort({ time: -1 });
+// always ensure we have ONE conversationId
+if (!finalConversationId) {
+  finalConversationId = Date.now().toString();
+}
 
+// only check last message if conversation exists
+let lastMessage = null;
+
+if (finalConversationId) {
+  lastMessage = await Conversation.findOne({
+    companyId,
+    conversationId: finalConversationId
+  }).sort({ time: -1 });
+}
+
+// if human takeover is ON → do NOT trigger AI
 if (lastMessage && lastMessage.aiActive === false) {
   await Conversation.create({
     companyId,
     conversationId: finalConversationId,
     message,
-    reply: "",
+    reply: null,
     time: new Date().toISOString(),
     isUnread: true,
     aiActive: false
   });
 
   return res.json({
-    reply: "",
+    reply: null,
     conversationId: finalConversationId
   });
-}
-
-if (!finalConversationId) {
-  finalConversationId = Date.now().toString();
-}
-
-if (!finalConversationId) {
-  finalConversationId = Date.now().toString();
 }
 
 await Conversation.create({
@@ -621,7 +624,6 @@ message.style.background = "#eee";
 message.style.borderRadius = "8px";
 
 const messagesDiv = chatBox.querySelector("#assistly-messages");
-messagesDiv.appendChild(message);
 messagesDiv.scrollTop = messagesDiv.scrollHeight;
 
 input.value = "";
@@ -666,8 +668,7 @@ fetch("https://assistlychat.com/chat", {
 
   document.body.appendChild(button);
   document.body.appendChild(chatBox);
-  let lastRenderedCount = 0;
-setInterval(() => {
+ setInterval(() => {
   if (!window.assistlyConversationId) return;
 
   let companyId = null;
@@ -686,41 +687,42 @@ setInterval(() => {
     .then(messages => {
       const messagesDiv = chatBox.querySelector("#assistly-messages");
 
-messagesDiv.style.display = "flex";
-messagesDiv.style.flexDirection = "column";
-messagesDiv.style.alignItems = "stretch";
+      // 🔥 CLEAR OLD MESSAGES (THIS FIXES DUPLICATES)
+      messagesDiv.innerHTML = "";
 
-     messages.slice(lastRenderedCount).forEach(msg => {
-  const row = document.createElement("div");
-  row.style.width = "100%";
-  row.style.display = "flex";
-  row.style.margin = "6px 0";
+      messagesDiv.style.display = "flex";
+      messagesDiv.style.flexDirection = "column";
+      messagesDiv.style.alignItems = "stretch";
 
-  const bubble = document.createElement("div");
-  bubble.style.padding = "9px 11px";
-  bubble.style.borderRadius = "10px";
-  bubble.style.maxWidth = "82%";
-  bubble.style.wordBreak = "break-word";
-  bubble.style.lineHeight = "1.35";
-  bubble.style.fontSize = "14px";
+      messages.forEach(msg => {
+        const row = document.createElement("div");
+        row.style.width = "100%";
+        row.style.display = "flex";
+        row.style.margin = "6px 0";
 
-  if (msg.reply) {
-    row.style.justifyContent = "flex-end";
-    bubble.innerText = msg.reply;
-    bubble.style.background = "#4f46e5";
-    bubble.style.color = "white";
-  } else {
-    row.style.justifyContent = "flex-start";
-    bubble.innerText = msg.message;
-    bubble.style.background = "#eee";
-    bubble.style.color = "#111";
-  }
+        const bubble = document.createElement("div");
+        bubble.style.padding = "9px 11px";
+        bubble.style.borderRadius = "10px";
+        bubble.style.maxWidth = "82%";
+        bubble.style.wordBreak = "break-word";
+        bubble.style.lineHeight = "1.35";
+        bubble.style.fontSize = "14px";
 
-  row.appendChild(bubble);
-  messagesDiv.appendChild(row);
-});
+        if (msg.reply) {
+          row.style.justifyContent = "flex-end";
+          bubble.innerText = msg.reply;
+          bubble.style.background = "#4f46e5";
+          bubble.style.color = "white";
+        } else {
+          row.style.justifyContent = "flex-start";
+          bubble.innerText = msg.message;
+          bubble.style.background = "#eee";
+          bubble.style.color = "#111";
+        }
 
-lastRenderedCount = messages.length;
+        row.appendChild(bubble);
+        messagesDiv.appendChild(row);
+      });
 
       messagesDiv.scrollTop = messagesDiv.scrollHeight;
     });
