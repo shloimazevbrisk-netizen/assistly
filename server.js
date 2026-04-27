@@ -719,9 +719,11 @@ messagesDiv.innerHTML = "";
 
   div.style.padding = "8px";
   div.style.margin = "5px";
+div.style.width = "fit-content";
   div.style.borderRadius = "8px";
-  div.style.maxWidth = "70%";
-  div.style.display = "inline-block";
+  div.style.maxWidth = "80%";
+div.style.display = "block";
+div.style.wordWrap = "break-word";
 
   // 🔥 COMPANY MESSAGE (AI OR HUMAN)
   if (msg.reply) {
@@ -729,14 +731,16 @@ messagesDiv.innerHTML = "";
     div.style.background = "#4f46e5";
     div.style.color = "white";
     div.style.alignSelf = "flex-end";
-    div.style.marginLeft = "auto";
+div.style.marginLeft = "auto";
+div.style.textAlign = "left";
   } 
   // 👤 VISITOR MESSAGE
   else {
     div.innerText = msg.message;
     div.style.background = "#eee";
     div.style.alignSelf = "flex-start";
-    div.style.marginRight = "auto";
+div.style.marginRight = "auto";
+div.style.textAlign = "left";
   }
 
   messagesDiv.appendChild(div);
