@@ -289,14 +289,15 @@ if (lastMessage && lastMessage.aiActive === false) {
   });
 }
 
-if (!finalConversationId && emailMatch) {
-  const existingConversation = await Conversation.findOne({
-    companyId,
-    email: emailMatch[0].toLowerCase()
+if (!finalConversationId) {
+  const lastConversation = await Conversation.findOne({
+    companyId
   }).sort({ time: -1 });
 
-  if (existingConversation) {
-    finalConversationId = existingConversation.conversationId;
+  if (lastConversation) {
+    finalConversationId = lastConversation.conversationId;
+  } else {
+    finalConversationId = Date.now().toString();
   }
 }
 
