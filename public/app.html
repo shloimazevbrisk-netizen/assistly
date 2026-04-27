@@ -489,7 +489,7 @@
         <div class="input-bar">
           <input id="input" placeholder="Type your message..." />
           <button id="toggleAIBtn" onclick="toggleAI()">Take Over AI</button>
-<button onclick="send()">Send</button>
+<button id="sendBtn" onclick="send()" style="display:none;">Send</button>
         </div>
       </div>
     </div>
@@ -1000,7 +1000,14 @@ if (!currentConversationId) {
 
 const data = await response.json();
 
-      chat.innerHTML += `
+// 🔥 HUMAN MODE → STOP HERE (no AI reply)
+if (!aiActive) {
+  loadConversations();
+  return;
+}
+
+// ✅ AI MODE → show AI reply
+chat.innerHTML += `
   <div class="message-row bot-row">
     <div>
       <div class="bubble bot-bubble">${escapeHtml(data.reply || "No reply")}</div>
@@ -1023,7 +1030,8 @@ style="
     </div>
   </div>
 `;
-      chat.scrollTop = chat.scrollHeight;
+
+  chat.scrollTop = chat.scrollHeight;
 
       document.getElementById("chatTitle").textContent = localStorage.getItem("selectedLeadEmail") || "Current Chat";
       document.getElementById("chatSubtitle").textContent = "Latest conversation";
@@ -1228,10 +1236,12 @@ async function toggleAI() {
   const btn = document.getElementById("toggleAIBtn");
 
   if (!aiActive) {
-    btn.innerText = "Turn AI Back On";
-  } else {
-    btn.innerText = "Take Over AI";
-  }
+  btn.innerText = "Turn AI Back On";
+  document.getElementById("sendBtn").style.display = "block";
+} else {
+  btn.innerText = "Take Over AI";
+  document.getElementById("sendBtn").style.display = "none";
+}
 
   const conversationId = localStorage.getItem("conversationId");
   const companyId = localStorage.getItem("companyId");
