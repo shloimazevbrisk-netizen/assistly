@@ -36,7 +36,8 @@ const Conversation = mongoose.model("Conversation", {
   reply: String,
   email: String,
   name: String,
-  time: String
+  time: String,
+  isNew: Boolean 
 });
 
 const CompanyData = mongoose.model(
@@ -58,7 +59,8 @@ const Lead = mongoose.model("Lead", {
   companyId: String,
   name: String,
   email: String,
-  time: String
+  time: String,
+  isNew: Boolean 
 });
 
 const upload = multer({ dest: "uploads/" });
