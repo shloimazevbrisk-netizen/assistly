@@ -705,8 +705,6 @@ messagesDiv.style.display = "flex";
 messagesDiv.style.flexDirection = "column";
 messagesDiv.style.alignItems = "stretch";
 
-messagesDiv.innerHTML = "";
-
      messages.forEach(msg => {
   const row = document.createElement("div");
   row.style.width = "100%";

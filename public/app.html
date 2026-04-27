@@ -869,19 +869,18 @@ async function improveAI(reply, message, buttonElement) {
         return;
       }
 
-      const latestByEmail = {};
+      const grouped = {};
 
 data.forEach(convo => {
-  const email = convo.email;
-  if (!email) return;
+  const key = convo.email || convo.conversationId; // 🔥 important
 
-  // keep ONLY latest conversation per email
-  if (!latestByEmail[email] || convo.conversationId > latestByEmail[email].conversationId) {
-    latestByEmail[email] = convo;
+  if (!grouped[key] || convo.conversationId > grouped[key].conversationId) {
+    grouped[key] = convo;
   }
 });
 
-Object.values(latestByEmail).forEach(convo => {
+Object.values(grouped).forEach(convo => {
+
   const div = document.createElement("div");
   div.className = "convo";
 
