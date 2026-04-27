@@ -207,9 +207,23 @@ const foundFix = fixes.find(f =>
 );
 
 if (foundFix) {
+  let finalConversationId = conversationId || Date.now().toString();
+
+  await Conversation.create({
+    companyId,
+    conversationId: finalConversationId,
+    message,
+    reply: foundFix.improved,
+    email: emailMatch ? emailMatch[0].toLowerCase() : null,
+    name: name || null,
+    time: new Date().toISOString(),
+    isUnread: true,
+    aiActive: true
+  });
+
   return res.json({
     reply: foundFix.improved,
-    conversationId: conversationId || Date.now().toString()
+    conversationId: finalConversationId
   });
 }
 
@@ -226,12 +240,51 @@ if (!name && emailMatch) {
   name = "Lead";
 }
 
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [
-        {
-          role: "system",
-          content: `
+    let finalConversationId = conversationId;
+
+// always ensure we have ONE conversationId
+if (!finalConversationId) {
+  finalConversationId = Date.now().toString();
+}
+
+
+// only check last message if conversation exists
+let lastMessage = null;
+
+if (finalConversationId) {
+  lastMessage = await Conversation.findOne({
+    companyId,
+    conversationId: finalConversationId
+  }).sort({ time: -1 });
+}
+
+
+if (lastMessage && lastMessage.aiActive === false) {
+  await Conversation.create({
+    companyId,
+    conversationId: finalConversationId,
+    message,
+    reply: null,
+    email: emailMatch ? emailMatch[0].toLowerCase() : null,
+    name: name || null,
+    time: new Date().toISOString(),
+    isUnread: true,
+    aiActive: false
+  });
+
+  return res.json({
+    reply: null,
+    conversationId: finalConversationId
+  });
+}
+
+
+const response = await openai.chat.completions.create({
+  model: "gpt-4o-mini",
+  messages: [
+    {
+      role: "system",
+      content: `
 You are an AI assistant for a specific company.
 
 You MUST ONLY answer questions related to the company, its services, pricing, or support.
@@ -249,67 +302,32 @@ Rules:
 - If the user shows buying interest, ask for name and email
 - If the user already provided email, do not ask again
 `
-        },
-        {
-          role: "user",
-          content: `
+    },
+    {
+      role: "user",
+      content: `
 User message: ${message}
 
 User info:
 Name: ${name}
 Email: ${emailMatch ? emailMatch[0] : "not provided"}
 `
-        }
-      ]
-    });
+    }
+  ]
+});
 
-    const answer = response.choices[0].message.content;
-
-    let finalConversationId = conversationId;
-
-// always ensure we have ONE conversationId
-if (!finalConversationId) {
-  finalConversationId = Date.now().toString();
-}
-
-// only check last message if conversation exists
-let lastMessage = null;
-
-if (finalConversationId) {
-  lastMessage = await Conversation.findOne({
-    companyId,
-    conversationId: finalConversationId
-  }).sort({ time: -1 });
-}
-
-// if human takeover is ON → do NOT trigger AI
-if (lastMessage && lastMessage.aiActive === false) {
-  await Conversation.create({
-    companyId,
-    conversationId: finalConversationId,
-    message,
-    reply: null,
-    time: new Date().toISOString(),
-    isUnread: true,
-    aiActive: false
-  });
-
-  return res.json({
-    reply: null,
-    conversationId: finalConversationId
-  });
-}
+const answer = response.choices[0].message.content;
 
 await Conversation.create({
   companyId,
   conversationId: finalConversationId,
-  message,
-  reply: answer,
+  message: message || "",
+  reply: answer || null,
   email: emailMatch ? emailMatch[0].toLowerCase() : null,
   name: name || null,
   time: new Date().toISOString(),
-
-  isUnread: true
+  isUnread: true,
+  aiActive: true
 });
 
 
@@ -614,14 +632,6 @@ input.addEventListener("keypress", function (e) {
   if (e.key === "Enter") {
     const msg = input.value;
 if (!msg) return;
-
-// show user message
-const message = document.createElement("div");
-message.innerText = msg;
-message.style.padding = "8px";
-message.style.margin = "5px";
-message.style.background = "#eee";
-message.style.borderRadius = "8px";
 
 const messagesDiv = chatBox.querySelector("#assistly-messages");
 messagesDiv.scrollTop = messagesDiv.scrollHeight;
