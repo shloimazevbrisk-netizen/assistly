@@ -226,23 +226,6 @@ if (!name && emailMatch) {
   name = "Lead";
 }
 
-  try {
-if (lastMessage && lastMessage.aiActive === false) {
-  await Conversation.create({
-    companyId,
-    conversationId: finalConversationId,
-    message,
-    reply: "",
-    time: new Date().toISOString(),
-    isUnread: true,
-    aiActive: false
-  });
-
-  return res.json({
-    reply: "",
-    conversationId: finalConversationId
-  });
-}
     const response = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
