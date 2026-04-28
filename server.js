@@ -286,7 +286,6 @@ const response = await openai.chat.completions.create({
     {
       role: "system",
       content: `
-content: `
 You are a smart AI assistant for a company.
 
 You can act as BOTH:
