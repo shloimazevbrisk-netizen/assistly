@@ -718,13 +718,14 @@ window.lastUserMessage = msg;
     .then(messages => {
       const messagesDiv = chatBox.querySelector("#assistly-messages");
 
-const existingMessages = Array.from(messagesDiv.children).map(el => el.innerText);
+// track messages by time (unique)
+const existingIds = Array.from(messagesDiv.children).map(el => el.dataset.id);
 
 messages.forEach(msg => {
   const text = msg.reply ? msg.reply : msg.message;
+  const id = msg.time; // unique per message
 
-  // skip if already rendered
-  if (existingMessages.includes(text)) return;
+  if (existingIds.includes(id)) return;
 
   const row = document.createElement("div");
   row.style.width = "100%";
@@ -751,8 +752,9 @@ messages.forEach(msg => {
     bubble.style.color = "#111";
   }
 
-  row.appendChild(bubble);
-  messagesDiv.appendChild(row);
+row.dataset.id = msg.time; // IMPORTANT
+row.appendChild(bubble);
+messagesDiv.appendChild(row);
 });
 
 messagesDiv.scrollTop = messagesDiv.scrollHeight;
