@@ -726,7 +726,14 @@ messages.forEach(msg => {
   const text = msg.reply ? msg.reply : msg.message;
   const id = msg.time;
 
-  if (existingIds.includes(id)) return;
+  // 🚫 skip if already rendered
+if (existingIds.includes(id)) return;
+
+// 🚫 HUMAN MODE duplicate fix
+if (msg.reply && messagesDiv.lastChild) {
+  const lastText = messagesDiv.lastChild.innerText;
+  if (lastText === msg.reply) return;
+}
 
   const row = document.createElement("div");
   row.style.width = "100%";
