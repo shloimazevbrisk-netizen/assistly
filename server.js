@@ -631,7 +631,12 @@ const input = chatBox.querySelector("#assistly-input");
 input.addEventListener("keypress", function (e) {
   if (e.key === "Enter") {
     const msg = input.value;
-    if (!msg) return;
+if (!msg) return;
+
+input.value = "";
+
+// keep message so it doesn't disappear
+window.lastUserMessage = msg;
 
     const messagesDiv = chatBox.querySelector("#assistly-messages");
 
@@ -685,10 +690,10 @@ input.addEventListener("keypress", function (e) {
     })
     .then(res => res.json())
     .then(data => {
-      if (data.conversationId) {
-        window.assistlyConversationId = data.conversationId;
-      }
-    });
+  if (data.conversationId) {
+    window.assistlyConversationId = data.conversationId;
+  }
+});
   }
 });
   document.body.appendChild(button);
@@ -723,11 +728,23 @@ if (messagesDiv.dataset.last !== newData) {
   return;
 }
 
+// ✅ CLEAR ONLY AFTER UI UPDATE
+if (window.lastUserMessage) {
+  const existsInServer = messages.some(m => m.message === window.lastUserMessage);
+  if (existsInServer) {
+    window.lastUserMessage = null;
+  }
+}
+
       messagesDiv.style.display = "flex";
       messagesDiv.style.flexDirection = "column";
       messagesDiv.style.alignItems = "stretch";
 
-      messages.forEach(msg => {
+if (window.lastUserMessage) {
+  messages.push({ message: window.lastUserMessage });
+}
+     
+ messages.forEach(msg => {
         const row = document.createElement("div");
         row.style.width = "100%";
         row.style.display = "flex";
