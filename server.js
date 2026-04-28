@@ -209,6 +209,21 @@ function getRelevantContext(text, query) {
 
 const relevantContext = getRelevantContext(companyData, message);
 
+const isClearlyOffTopic =
+  !relevantContext &&
+  message.length > 5 &&
+  !message.toLowerCase().includes("price") &&
+  !message.toLowerCase().includes("cost") &&
+  !message.toLowerCase().includes("how") &&
+  !message.toLowerCase().includes("what");
+
+if (isClearlyOffTopic) {
+  return res.json({
+    reply: "I can only help with questions about our company and services. What would you like to know?",
+    conversationId: conversationId || Date.now().toString()
+  });
+}
+
 const normalize = (text) =>
   text.toLowerCase().replace(/[^\w\s]/gi, "").trim();
 
