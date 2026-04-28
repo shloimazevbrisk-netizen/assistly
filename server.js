@@ -717,16 +717,44 @@ window.lastUserMessage = msg;
     .then(messages => {
       const messagesDiv = chatBox.querySelector("#assistly-messages");
 
-      // 🔥 CLEAR OLD MESSAGES (THIS FIXES DUPLICATES)
-      // only clear if messages changed
-const newData = JSON.stringify(messages);
+const existingMessages = Array.from(messagesDiv.children).map(el => el.innerText);
 
-if (messagesDiv.dataset.last !== newData) {
-  messagesDiv.innerHTML = "";
-  messagesDiv.dataset.last = newData;
-} else {
-  return;
-}
+messages.forEach(msg => {
+  const text = msg.reply ? msg.reply : msg.message;
+
+  // skip if already rendered
+  if (existingMessages.includes(text)) return;
+
+  const row = document.createElement("div");
+  row.style.width = "100%";
+  row.style.display = "flex";
+  row.style.margin = "6px 0";
+
+  const bubble = document.createElement("div");
+  bubble.style.padding = "9px 11px";
+  bubble.style.borderRadius = "10px";
+  bubble.style.maxWidth = "82%";
+  bubble.style.wordBreak = "break-word";
+  bubble.style.lineHeight = "1.35";
+  bubble.style.fontSize = "14px";
+
+  if (msg.reply) {
+    row.style.justifyContent = "flex-end";
+    bubble.innerText = msg.reply;
+    bubble.style.background = "#4f46e5";
+    bubble.style.color = "white";
+  } else {
+    row.style.justifyContent = "flex-start";
+    bubble.innerText = msg.message;
+    bubble.style.background = "#eee";
+    bubble.style.color = "#111";
+  }
+
+  row.appendChild(bubble);
+  messagesDiv.appendChild(row);
+});
+
+messagesDiv.scrollTop = messagesDiv.scrollHeight;
 
 // ✅ CLEAR ONLY AFTER UI UPDATE
 if (window.lastUserMessage) {
