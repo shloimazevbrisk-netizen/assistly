@@ -635,7 +635,7 @@ input.addEventListener("keypress", function (e) {
 
     const messagesDiv = chatBox.querySelector("#assistly-messages");
 
-    // ✅ SHOW USER MESSAGE
+    // show user message
     const userRow = document.createElement("div");
     userRow.style.width = "100%";
     userRow.style.display = "flex";
@@ -653,13 +653,9 @@ input.addEventListener("keypress", function (e) {
     userRow.appendChild(userBubble);
     messagesDiv.appendChild(userRow);
 
-    // scroll
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
-
-    // clear input
     input.value = "";
 
-    // GET companyId
     let companyId = null;
     const scripts = document.getElementsByTagName("script");
 
@@ -676,7 +672,6 @@ input.addEventListener("keypress", function (e) {
 
     let conversationId = window.assistlyConversationId || null;
 
-    // SEND TO BACKEND
     fetch("https://assistlychat.com/chat", {
       method: "POST",
       headers: {
@@ -696,9 +691,6 @@ input.addEventListener("keypress", function (e) {
     });
   }
 });
-  }
-});
-
   document.body.appendChild(button);
   document.body.appendChild(chatBox);
  setInterval(() => {
