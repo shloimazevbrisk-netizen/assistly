@@ -723,7 +723,10 @@ const existingIds = Array.from(messagesDiv.children).map(el => el.dataset.id);
 
 messages.forEach(msg => {
   const text = msg.reply ? msg.reply : msg.message;
-  const id = msg.time; // unique per message
+  const id = msg.time;
+
+  // 🚫 prevent duplicate of user's own message
+  if (!msg.reply && text === window.lastUserMessage) return;
 
   if (existingIds.includes(id)) return;
 
