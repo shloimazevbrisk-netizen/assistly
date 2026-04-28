@@ -718,15 +718,13 @@ window.lastUserMessage = msg;
     .then(messages => {
       const messagesDiv = chatBox.querySelector("#assistly-messages");
 
-// track messages by time (unique)
-const existingIds = Array.from(messagesDiv.children).map(el => el.dataset.id);
+const existingIds = Array.from(messagesDiv.children)
+  .map(el => el.dataset.id)
+  .filter(Boolean);
 
 messages.forEach(msg => {
   const text = msg.reply ? msg.reply : msg.message;
   const id = msg.time;
-
-  // 🚫 prevent duplicate of user's own message
-  if (!msg.reply && text === window.lastUserMessage) return;
 
   if (existingIds.includes(id)) return;
 
@@ -755,20 +753,13 @@ messages.forEach(msg => {
     bubble.style.color = "#111";
   }
 
-row.dataset.id = msg.time; // IMPORTANT
+row.dataset.id = msg.time; 
 row.appendChild(bubble);
 messagesDiv.appendChild(row);
 });
 
 messagesDiv.scrollTop = messagesDiv.scrollHeight;
 
-// ✅ CLEAR ONLY AFTER UI UPDATE
-if (window.lastUserMessage) {
-  const existsInServer = messages.some(m => m.message === window.lastUserMessage);
-  if (existsInServer) {
-    window.lastUserMessage = null;
-  }
-}
 
       messagesDiv.style.display = "flex";
       messagesDiv.style.flexDirection = "column";
