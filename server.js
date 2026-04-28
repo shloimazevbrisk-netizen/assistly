@@ -726,14 +726,14 @@ messages.forEach(msg => {
   const text = msg.reply ? msg.reply : msg.message;
   const id = msg.time;
 
-  // 🚫 skip if already rendered
-if (existingIds.includes(id)) return;
+  // 🚫 skip if already rendered by ID
+  if (existingIds.includes(id)) return;
 
-// 🚫 HUMAN MODE duplicate fix
-if (msg.reply && messagesDiv.lastChild) {
-  const lastText = messagesDiv.lastChild.innerText;
-  if (lastText === msg.reply) return;
-}
+  // 🚫 NEW: prevent duplicate text (THIS FIXES YOUR BUG)
+  if (messagesDiv.lastChild) {
+    const lastText = messagesDiv.lastChild.innerText;
+    if (lastText === text) return;
+  }
 
   const row = document.createElement("div");
   row.style.width = "100%";
@@ -760,9 +760,9 @@ if (msg.reply && messagesDiv.lastChild) {
     bubble.style.color = "#111";
   }
 
-row.dataset.id = msg.time; 
-row.appendChild(bubble);
-messagesDiv.appendChild(row);
+  row.dataset.id = msg.time;
+  row.appendChild(bubble);
+  messagesDiv.appendChild(row);
 });
 
 messagesDiv.scrollTop = messagesDiv.scrollHeight;
