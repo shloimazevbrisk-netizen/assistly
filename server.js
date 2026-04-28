@@ -209,6 +209,8 @@ function getRelevantContext(text, query) {
 
 const relevantContext = getRelevantContext(companyData, message);
 
+const lowerMsg = message.toLowerCase();
+
 const isOffTopic =
   lowerMsg.startsWith("who is") ||
   lowerMsg.startsWith("what is") ||
