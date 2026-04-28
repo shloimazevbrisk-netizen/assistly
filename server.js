@@ -713,7 +713,15 @@ input.addEventListener("keypress", function (e) {
       const messagesDiv = chatBox.querySelector("#assistly-messages");
 
       // 🔥 CLEAR OLD MESSAGES (THIS FIXES DUPLICATES)
-      messagesDiv.innerHTML = "";
+      // only clear if messages changed
+const newData = JSON.stringify(messages);
+
+if (messagesDiv.dataset.last !== newData) {
+  messagesDiv.innerHTML = "";
+  messagesDiv.dataset.last = newData;
+} else {
+  return;
+}
 
       messagesDiv.style.display = "flex";
       messagesDiv.style.flexDirection = "column";
