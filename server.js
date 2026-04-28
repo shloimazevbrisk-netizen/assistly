@@ -741,7 +741,10 @@ if (window.lastUserMessage) {
       messagesDiv.style.alignItems = "stretch";
 
 if (window.lastUserMessage) {
-  messages.push({ message: window.lastUserMessage });
+  const exists = messages.some(m => m.message === window.lastUserMessage);
+  if (!exists) {
+    messages.push({ message: window.lastUserMessage });
+  }
 }
      
  messages.forEach(msg => {
