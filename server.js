@@ -796,6 +796,17 @@ app.post("/human-reply", async (req, res) => {
     return res.status(400).json({ message: "Missing fields" });
   }
 
+  // ✅ CHECK LAST MESSAGE TO PREVENT DUPLICATES
+  const last = await Conversation.findOne({
+    companyId,
+    conversationId
+  }).sort({ time: -1 });
+
+  // 🚫 If same reply already exists → DO NOTHING
+  if (last && last.reply === message) {
+    return res.json({ success: true });
+  }
+
   await Conversation.create({
     companyId,
     conversationId,
