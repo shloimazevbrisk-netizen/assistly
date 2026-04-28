@@ -209,15 +209,16 @@ function getRelevantContext(text, query) {
 
 const relevantContext = getRelevantContext(companyData, message);
 
-const isClearlyOffTopic =
-  !relevantContext &&
-  message.length > 5 &&
-  !message.toLowerCase().includes("price") &&
-  !message.toLowerCase().includes("cost") &&
-  !message.toLowerCase().includes("how") &&
-  !message.toLowerCase().includes("what");
+const isOffTopic =
+  lowerMsg.startsWith("who is") ||
+  lowerMsg.startsWith("what is") ||
+  lowerMsg.includes("president") ||
+  lowerMsg.includes("biden") ||
+  lowerMsg.includes("trump") ||
+  lowerMsg.includes("weather") ||
+  lowerMsg.includes("news");
 
-if (isClearlyOffTopic) {
+if (isOffTopic) {
   return res.json({
     reply: "I can only help with questions about our company and services. What would you like to know?",
     conversationId: conversationId || Date.now().toString()
