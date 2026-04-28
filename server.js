@@ -176,6 +176,19 @@ app.post("/chat", async (req, res) => {
 const companyData = companyDoc ? companyDoc.knowledge : "";
 const fixes = await getAIFixes(companyId);
 
+const emailMatch = message.match(/[^\s]+@[^\s]+\.[^\s]+/);
+
+  let name = null;
+  const nameMatch = message.match(/(?:my name is|i am|this is)\s+([a-zA-Z]+)/i);
+
+ if (nameMatch) {
+  name = nameMatch[1];
+}
+
+if (!name && emailMatch) {
+  name = "Lead";
+}
+
 function getRelevantContext(text, query) {
   const parts = text.split("\n").filter(p => p.trim().length > 0);
 
@@ -227,18 +240,6 @@ if (foundFix) {
   });
 }
 
-  const emailMatch = message.match(/[^\s]+@[^\s]+\.[^\s]+/);
-
-  let name = null;
-  const nameMatch = message.match(/(?:my name is|i am|this is)\s+([a-zA-Z]+)/i);
-
- if (nameMatch) {
-  name = nameMatch[1];
-}
-
-if (!name && emailMatch) {
-  name = "Lead";
-}
 
     let finalConversationId = conversationId;
 
@@ -768,44 +769,6 @@ if (window.lastUserMessage) {
       messagesDiv.style.flexDirection = "column";
       messagesDiv.style.alignItems = "stretch";
 
-if (window.lastUserMessage) {
-  const exists = messages.some(m => m.message === window.lastUserMessage);
-  if (!exists) {
-    messages.push({ message: window.lastUserMessage });
-  }
-}
-     
- messages.forEach(msg => {
-        const row = document.createElement("div");
-        row.style.width = "100%";
-        row.style.display = "flex";
-        row.style.margin = "6px 0";
-
-        const bubble = document.createElement("div");
-        bubble.style.padding = "9px 11px";
-        bubble.style.borderRadius = "10px";
-        bubble.style.maxWidth = "82%";
-        bubble.style.wordBreak = "break-word";
-        bubble.style.lineHeight = "1.35";
-        bubble.style.fontSize = "14px";
-
-        if (msg.reply) {
-          row.style.justifyContent = "flex-end";
-          bubble.innerText = msg.reply;
-          bubble.style.background = "#4f46e5";
-          bubble.style.color = "white";
-        } else {
-          row.style.justifyContent = "flex-start";
-          bubble.innerText = msg.message;
-          bubble.style.background = "#eee";
-          bubble.style.color = "#111";
-        }
-
-        row.appendChild(bubble);
-        messagesDiv.appendChild(row);
-      });
-
-      messagesDiv.scrollTop = messagesDiv.scrollHeight;
     });
 }, 2000);
 })();
