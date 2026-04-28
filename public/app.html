@@ -991,17 +991,12 @@ if (!aiActive) {
     })
   });
 
-  // show message on RIGHT side (same as AI)
-  chat.innerHTML += `
-    <div class="message-row bot-row">
-      <div class="bubble bot-bubble">${escapeHtml(message)}</div>
-    </div>
-  `;
-
   chat.scrollTop = chat.scrollHeight;
   loadConversations();
   return;
-} else {
+} 
+
+else {
   // 🤖 AI MODE
   response = await fetch(`${API_BASE}/chat`, {
     method: "POST",
