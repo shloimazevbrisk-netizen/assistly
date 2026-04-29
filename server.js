@@ -234,10 +234,10 @@ else if (
   lowerMsg.includes("trial") ||
   lowerMsg.includes("sounds good") ||
   lowerMsg.includes("interested") ||
-  lowerMsg.includes("yes")
+  lowerMsg.includes("yes") ||
   lowerMsg.includes("start") ||
   lowerMsg.includes("sign up") ||
-  lowerMsg.includes("get started") ||
+  lowerMsg.includes("get started")
 ) {
   forcedReply = "Great! I can help you get started. Can I get your name, email, and phone number so someone from our team can reach out to you?";
 }
