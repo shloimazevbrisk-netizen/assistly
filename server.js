@@ -257,7 +257,9 @@ else if (
     lowerMsg.includes("sign up") ||
     lowerMsg.includes("get started")
   )
-)
+) {
+  forcedReply = "Great! I can help you get started. Can I get your name, email, and phone number so someone from our team can reach out to you?";
+}
 
 else if (alreadyHasLead && lowerMsg.includes("sounds good")) {
   forcedReply = "Great! Our team will reach out shortly. Let me know if you have any questions in the meantime.";
