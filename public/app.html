@@ -714,10 +714,15 @@ function getEmbedCode() {
       messages.forEach(msg => {
         if (msg.message) {
           chat.innerHTML += `
-            <div class="message-row user-row">
-              <div class="bubble user-bubble">${escapeHtml(msg.message)}</div>
-            </div>
-          `;
+  <div class="message-row user-row">
+    <div>
+      <div class="bubble user-bubble">${escapeHtml(msg.message)}</div>
+      <div style="font-size:11px;color:#6b7280;margin-top:4px;">
+        ${formatMessageTime(msg.time)}
+      </div>
+    </div>
+  </div>
+`;
         }
 
         if (msg.reply) {
@@ -725,6 +730,10 @@ function getEmbedCode() {
     <div class="message-row bot-row">
       <div>
         <div class="bubble bot-bubble">${escapeHtml(msg.reply)}</div>
+
+        <div style="font-size:11px;color:#6b7280;margin-top:4px;text-align:right;">
+          ${formatMessageTime(msg.time)}
+        </div>
 
 
   <button class="improve-btn" 
@@ -750,6 +759,19 @@ style="
 
       chat.scrollTop = chat.scrollHeight;
     }
+
+function formatMessageTime(time) {
+  if (!time) return "";
+
+  const date = new Date(time);
+
+  return date.toLocaleString([], {
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit"
+  });
+}
 
     function escapeHtml(text) {
       const div = document.createElement("div");
