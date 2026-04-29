@@ -178,6 +178,8 @@ const fixes = await getAIFixes(companyId);
 
 const emailMatch = message.match(/[^\s]+@[^\s]+\.[^\s]+/);
 
+const phoneMatch = message.match(/(\+?\d{7,15})/);
+
   let name = null;
   const nameMatch = message.match(/(?:my name is|i am|this is)\s+([a-zA-Z]+)/i);
 
@@ -211,9 +213,38 @@ const relevantContext = getRelevantContext(companyData, message);
 
 const lowerMsg = message.toLowerCase();
 
+let forcedReply = null;
+
+// 1. CONTACT INFO (HIGHEST PRIORITY)
+if (emailMatch || phoneMatch) {
+  forcedReply = "Thanks! Someone from our team will contact you as soon as possible.";
+}
+
+// 2. THANK YOU
+else if (lowerMsg.includes("thank")) {
+  forcedReply = "You're welcome! Let me know if you need anything else.";
+}
+
+// 3. INTEREST
+else if (
+  lowerMsg.includes("price") ||
+  lowerMsg.includes("cost") ||
+  lowerMsg.includes("how much") ||
+  lowerMsg.includes("demo") ||
+  lowerMsg.includes("trial") ||
+  lowerMsg.includes("sounds good") ||
+  lowerMsg.includes("interested") ||
+  lowerMsg.includes("yes")
+  lowerMsg.includes("start") ||
+  lowerMsg.includes("sign up") ||
+  lowerMsg.includes("get started") ||
+) {
+  forcedReply = "Great! I can help you get started. Can I get your name, email, and phone number so someone from our team can reach out to you?";
+}
+
 const isOffTopic =
   lowerMsg.startsWith("who is") ||
-  lowerMsg.startsWith("what is") ||
+  lowerMsg.startsWith("what is ") && !lowerMsg.includes("price") ||
   lowerMsg.includes("president") ||
   lowerMsg.includes("biden") ||
   lowerMsg.includes("trump") ||
@@ -224,6 +255,27 @@ if (isOffTopic) {
   return res.json({
     reply: "I can only help with questions about our company and services. What would you like to know?",
     conversationId: conversationId || Date.now().toString()
+  });
+}
+
+if (forcedReply) {
+  let finalConversationId = conversationId || Date.now().toString();
+
+  await Conversation.create({
+    companyId,
+    conversationId: finalConversationId,
+    message,
+    reply: forcedReply,
+    email: emailMatch ? emailMatch[0].toLowerCase() : null,
+    name: name || null,
+    time: new Date().toISOString(),
+    isUnread: true,
+    aiActive: true
+  });
+
+  return res.json({
+    reply: forcedReply,
+    conversationId: finalConversationId
   });
 }
 
