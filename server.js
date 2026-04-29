@@ -211,6 +211,20 @@ function getRelevantContext(text, query) {
 
 const relevantContext = getRelevantContext(companyData, message);
 
+// 🧠 LOAD LAST MESSAGES (MEMORY)
+const previousMessages = await Conversation.find({
+  companyId,
+  conversationId
+})
+.sort({ time: -1 })
+.limit(10);
+
+// reverse so oldest → newest
+const history = previousMessages.reverse().map(m => ([
+  { role: "user", content: m.message },
+  { role: "assistant", content: m.reply }
+])).flat();
+
 const lowerMsg = message.toLowerCase();
 
 let forcedReply = null;
@@ -364,9 +378,9 @@ if (lastMessage && lastMessage.aiActive === false) {
 const response = await openai.chat.completions.create({
   model: "gpt-4o-mini",
   messages: [
-    {
-      role: "system",
-      content: `
+  {
+    role: "system",
+    content: `
 You are a smart AI assistant for a company.
 
 You can act as BOTH:
@@ -417,18 +431,17 @@ Either:
 → help them
 → or convert them
 `
-    },
-    {
-      role: "user",
-      content: `
-User message: ${message}
+  },
 
-User info:
-Name: ${name}
-Email: ${emailMatch ? emailMatch[0] : "not provided"}
-`
-    }
-  ]
+  // 🧠 MEMORY (THIS IS THE NEW PART)
+  ...history,
+
+  // 🔥 CURRENT MESSAGE
+  {
+    role: "user",
+    content: message
+  }
+]
 });
 
 const answer = response.choices[0].message.content;
