@@ -920,7 +920,7 @@ Object.values(grouped).forEach(convo => {
       ${convo.isUnread ? '<span style="color:red;font-size:11px;">🔥 NEW</span>' : ''}
 
       <button 
-        onclick="editLeadName('${convo.email}', event)" 
+        onclick="startEditName('${convo.email}', this, event)"
         style="font-size:11px; background:#eee; border:none; padding:3px 6px; border-radius:6px; cursor:pointer;">
         ✏️
       </button>
@@ -1284,39 +1284,60 @@ setInterval(() => {
   }
 }, 3000);
 
-async function editLeadName(email, event) {
-  event.stopPropagation(); // 🔥 prevents opening chat
+let aiActive = true;
 
-  const newName = prompt("Enter new name for this contact:");
+function startEditName(email, btn, event) {
+  event.stopPropagation();
 
-  if (!newName) return;
+  // find the name text
+  const nameSpan = btn.parentElement.parentElement.querySelector("span");
 
-  const companyId = localStorage.getItem("companyId");
+  const currentName = nameSpan.innerText;
 
-  const res = await fetch(`${API_BASE}/update-lead-name`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      companyId,
-      email,
-      name: newName
-    })
+  // create input
+  const input = document.createElement("input");
+  input.value = currentName;
+  input.style.fontSize = "13px";
+  input.style.padding = "4px";
+  input.style.borderRadius = "6px";
+  input.style.border = "1px solid #ccc";
+  input.style.width = "120px";
+
+  // replace name with input
+  nameSpan.replaceWith(input);
+  input.focus();
+
+  // save function
+  const save = async () => {
+    const newName = input.value.trim();
+    if (!newName) return;
+
+    const companyId = localStorage.getItem("companyId");
+
+    await fetch(`${API_BASE}/update-lead-name`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        companyId,
+        email,
+        name: newName
+      })
+    });
+
+    // reload UI
+    loadConversations();
+  };
+
+  // save on Enter
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") save();
   });
 
-  const data = await res.json();
-
-  if (!res.ok) {
-    alert("Failed to update name");
-    return;
-  }
-
-  // 🔥 reload conversations so name updates instantly
-  loadConversations();
+  // save on click away
+  input.addEventListener("blur", save);
 }
-
-let aiActive = true;
 
 async function toggleAI() {
   aiActive = !aiActive;
