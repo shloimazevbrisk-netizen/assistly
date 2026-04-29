@@ -605,6 +605,31 @@ app.get("/leads", async (req, res) => {
   res.json(leads);
 });
 
+app.post("/update-lead-name", async (req, res) => {
+  const { companyId, email, name } = req.body;
+
+  if (!companyId || !email || !name) {
+    return res.status(400).json({ message: "Missing data" });
+  }
+
+  try {
+    await Lead.updateMany(
+      { companyId, email },
+      { name }
+    );
+
+    await Conversation.updateMany(
+      { companyId, email },
+      { name }
+    );
+
+    res.json({ message: "Name updated" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 app.delete("/delete-lead/:id", async (req, res) => {
   const { id } = req.params;
   const { companyId } = req.query;

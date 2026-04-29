@@ -913,16 +913,27 @@ Object.values(grouped).forEach(convo => {
   const preview = (convo.message || "No message").slice(0, 60);
 
   div.innerHTML = `
-  <div style="font-weight:600; display:flex; justify-content:space-between;">
+  <div style="font-weight:600; display:flex; justify-content:space-between; align-items:center;">
     <span>${escapeHtml(name)}</span>
-    ${convo.isUnread ? '<span style="color:red;font-size:11px;">🔥 NEW</span>' : ''}
+
+    <div style="display:flex; gap:6px; align-items:center;">
+      ${convo.isUnread ? '<span style="color:red;font-size:11px;">🔥 NEW</span>' : ''}
+
+      <button 
+        onclick="editLeadName('${convo.email}', event)" 
+        style="font-size:11px; background:#eee; border:none; padding:3px 6px; border-radius:6px; cursor:pointer;">
+        ✏️
+      </button>
+    </div>
   </div>
+
   <div style="font-size:12px;color:#666;margin-top:2px;">
     ${escapeHtml(preview)}
   </div>
 `;
 
-  div.onclick = async () => {
+  div.onclick = async (e) => {
+  if (e.target.tagName === "BUTTON") return;
 
       convo.isUnread = false;
 
@@ -1272,6 +1283,38 @@ setInterval(() => {
     loadConversations();
   }
 }, 3000);
+
+async function editLeadName(email, event) {
+  event.stopPropagation(); // 🔥 prevents opening chat
+
+  const newName = prompt("Enter new name for this contact:");
+
+  if (!newName) return;
+
+  const companyId = localStorage.getItem("companyId");
+
+  const res = await fetch(`${API_BASE}/update-lead-name`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      companyId,
+      email,
+      name: newName
+    })
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    alert("Failed to update name");
+    return;
+  }
+
+  // 🔥 reload conversations so name updates instantly
+  loadConversations();
+}
 
 let aiActive = true;
 
