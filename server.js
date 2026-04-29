@@ -261,6 +261,17 @@ if (isOffTopic) {
 if (forcedReply) {
   let finalConversationId = conversationId || Date.now().toString();
 
+  // 🔥 SAVE LEAD BEFORE RETURN
+  if (emailMatch) {
+    await Lead.create({
+      companyId,
+      name,
+      email: emailMatch[0].toLowerCase(),
+      time: new Date().toISOString(),
+      isUnread: true
+    });
+  }
+
   await Conversation.create({
     companyId,
     conversationId: finalConversationId,
