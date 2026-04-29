@@ -225,6 +225,9 @@ const history = previousMessages.reverse().map(m => ([
   { role: "assistant", content: m.reply }
 ])).flat();
 
+// 🧠 CHECK IF USER ALREADY GAVE CONTACT INFO
+const alreadyHasLead = previousMessages.some(m => m.email);
+
 const lowerMsg = message.toLowerCase();
 
 let forcedReply = null;
@@ -241,19 +244,23 @@ else if (lowerMsg.includes("thank")) {
 
 // 3. INTEREST
 else if (
-  lowerMsg.includes("price") ||
-  lowerMsg.includes("cost") ||
-  lowerMsg.includes("how much") ||
-  lowerMsg.includes("demo") ||
-  lowerMsg.includes("trial") ||
-  lowerMsg.includes("sounds good") ||
-  lowerMsg.includes("interested") ||
-  lowerMsg.includes("yes") ||
-  lowerMsg.includes("start") ||
-  lowerMsg.includes("sign up") ||
-  lowerMsg.includes("get started")
-) {
-  forcedReply = "Great! I can help you get started. Can I get your name, email, and phone number so someone from our team can reach out to you?";
+  !alreadyHasLead && (
+    lowerMsg.includes("price") ||
+    lowerMsg.includes("cost") ||
+    lowerMsg.includes("how much") ||
+    lowerMsg.includes("demo") ||
+    lowerMsg.includes("trial") ||
+    lowerMsg.includes("sounds good") ||
+    lowerMsg.includes("interested") ||
+    lowerMsg.includes("yes") ||
+    lowerMsg.includes("start") ||
+    lowerMsg.includes("sign up") ||
+    lowerMsg.includes("get started")
+  )
+)
+
+else if (alreadyHasLead && lowerMsg.includes("sounds good")) {
+  forcedReply = "Great! Our team will reach out shortly. Let me know if you have any questions in the meantime.";
 }
 
 const isOffTopic =
