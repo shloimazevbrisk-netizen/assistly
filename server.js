@@ -672,6 +672,47 @@ await Lead.findOneAndDelete({
   res.json({ success: true });
 });
 
+// ===== GREETING SETTINGS =====
+
+// SAVE greeting
+app.post("/save-greeting", async (req, res) => {
+  const { companyId, greeting } = req.body;
+
+  if (!companyId) {
+    return res.status(400).json({ message: "companyId required" });
+  }
+
+  try {
+    await mongoose.connection.collection("companies").updateOne(
+      { companyId },
+      { $set: { greeting } },
+      { upsert: true }
+    );
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "error saving greeting" });
+  }
+});
+
+// GET greeting (WITH DEFAULT)
+app.get("/get-greeting", async (req, res) => {
+  const { companyId } = req.query;
+
+  try {
+    const company = await mongoose.connection
+      .collection("companies")
+      .findOne({ companyId });
+
+    res.json({
+      greeting: company?.greeting || "Hi, How can I help you today?"
+    });
+  } catch (err) {
+    res.status(500).json({ message: "error" });
+  }
+});
+
 app.post("/save-notification-email", async (req, res) => {
   const { companyId, email } = req.body;
 
@@ -904,6 +945,48 @@ window.lastUserMessage = msg;
     .then(res => res.json())
     .then(messages => {
       const messagesDiv = chatBox.querySelector("#assistly-messages");
+
+// ===== GREETING (only once) =====
+if (!window.assistlyGreetingLoaded) {
+  window.assistlyGreetingLoaded = true;
+
+  let companyId = null;
+
+  const scripts = document.getElementsByTagName("script");
+  for (let s of scripts) {
+    if (s.src.includes("widget.js") && s.getAttribute("data-company")) {
+      companyId = s.getAttribute("data-company");
+    }
+  }
+
+  if (companyId) {
+    fetch("https://assistlychat.com/get-greeting?companyId=" + companyId)
+      .then(res => res.json())
+      .then(data => {
+        const greeting = data.greeting;
+
+        // 🚫 only show if NO messages yet
+        if (messagesDiv.children.length === 0) {
+          const row = document.createElement("div");
+          row.style.width = "100%";
+          row.style.display = "flex";
+          row.style.justifyContent = "flex-end";
+          row.style.margin = "6px 0";
+
+          const bubble = document.createElement("div");
+          bubble.innerText = greeting;
+          bubble.style.padding = "9px 11px";
+          bubble.style.borderRadius = "10px";
+          bubble.style.maxWidth = "82%";
+          bubble.style.background = "#4f46e5";
+          bubble.style.color = "white";
+
+          row.appendChild(bubble);
+          messagesDiv.appendChild(row);
+        }
+      });
+  }
+}
 
 const existingIds = Array.from(messagesDiv.children)
   .map(el => el.dataset.id)
