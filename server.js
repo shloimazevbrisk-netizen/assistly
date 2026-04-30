@@ -613,7 +613,7 @@ app.post("/update-lead-name", async (req, res) => {
   }
 
   try {
-    if (email) {
+    if (email && email !== "Unknown contact") {
       // ✅ update leads
       await Lead.updateMany({ companyId, email }, { name });
 
