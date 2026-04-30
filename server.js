@@ -606,22 +606,28 @@ app.get("/leads", async (req, res) => {
 });
 
 app.post("/update-lead-name", async (req, res) => {
-  const { companyId, email, name } = req.body;
+  const { companyId, email, conversationId, name } = req.body;
 
-  if (!companyId || !email || !name) {
+  if (!companyId || !name) {
     return res.status(400).json({ message: "Missing data" });
   }
 
   try {
-    await Lead.updateMany(
-      { companyId, email },
-      { name }
-    );
+    if (email) {
+      // ✅ update leads
+      await Lead.updateMany({ companyId, email }, { name });
 
-    await Conversation.updateMany(
-      { companyId, email },
-      { name }
-    );
+      await Conversation.updateMany(
+        { companyId, email },
+        { name }
+      );
+    } else if (conversationId) {
+      // ✅ update unknown contacts
+      await Conversation.updateMany(
+        { companyId, conversationId },
+        { name }
+      );
+    }
 
     res.json({ message: "Name updated" });
   } catch (err) {

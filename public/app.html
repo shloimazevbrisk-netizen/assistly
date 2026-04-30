@@ -920,7 +920,7 @@ Object.values(grouped).forEach(convo => {
       ${convo.isUnread ? '<span style="color:red;font-size:11px;">🔥 NEW</span>' : ''}
 
       <button 
-        onclick="startEditName('${convo.email}', this, event)"
+        onclick="startEditName('${convo.email || ""}', '${convo.conversationId}', this, event)"
         style="font-size:11px; background:#eee; border:none; padding:3px 6px; border-radius:6px; cursor:pointer;">
         ✏️
       </button>
@@ -1287,7 +1287,7 @@ setInterval(() => {
 let aiActive = true;
 let isEditingName = false;
 
-function startEditName(email, btn, event) {
+function startEditName(email, conversationId, btn, event) {
   event.stopPropagation();
 
   isEditingName = true;
@@ -1323,10 +1323,11 @@ function startEditName(email, btn, event) {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        companyId,
-        email,
-        name: newName
-      })
+  companyId,
+  email,
+  conversationId,
+  name: newName
+})
     });
 
     // reload UI
