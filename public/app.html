@@ -924,6 +924,13 @@ Object.values(grouped).forEach(convo => {
         style="font-size:11px; background:#eee; border:none; padding:3px 6px; border-radius:6px; cursor:pointer;">
         ✏️
       </button>
+
+<button 
+  onclick="deleteConversation('${convo.conversationId}', event)"
+  style="font-size:11px; background:#ef4444; color:white; border:none; padding:3px 6px; border-radius:6px; cursor:pointer;">
+  🗑
+</button>
+
     </div>
   </div>
 
@@ -1373,6 +1380,24 @@ async function toggleAI() {
       aiActive
     })
   });
+}
+
+async function deleteConversation(conversationId, event) {
+  event.stopPropagation();
+
+  if (!confirm("Delete this conversation?")) return;
+
+  const companyId = localStorage.getItem("companyId");
+
+  await fetch(`${API_BASE}/delete-conversation?companyId=${companyId}&conversationId=${conversationId}`, {
+    method: "DELETE"
+  });
+
+  loadConversations();
+
+  document.getElementById("chat").innerHTML = `
+    <div class="empty-chat">Conversation deleted.</div>
+  `;
 }
 
   </script>

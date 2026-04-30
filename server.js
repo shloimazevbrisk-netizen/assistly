@@ -636,6 +636,26 @@ app.post("/update-lead-name", async (req, res) => {
   }
 });
 
+app.delete("/delete-conversation", async (req, res) => {
+  const { companyId, conversationId } = req.query;
+
+  if (!companyId || !conversationId) {
+    return res.status(400).json({ message: "Missing data" });
+  }
+
+  try {
+    await Conversation.deleteMany({
+      companyId,
+      conversationId
+    });
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Error deleting conversation" });
+  }
+});
+
 app.delete("/delete-lead/:id", async (req, res) => {
   const { id } = req.params;
   const { companyId } = req.query;
