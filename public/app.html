@@ -387,20 +387,34 @@
       color: #374151;
     }
 
-    @media (max-width: 900px) {
-      .dashboard {
-        flex-direction: column;
-      }
+   @media (max-width: 900px) {
+  .dashboard {
+    flex-direction: column;
+    width: 100%;
+  }
 
-      .sidebar {
-        width: 100%;
-        height: 260px;
-      }
+  .sidebar {
+    width: 100%;
+    height: 260px;
+  }
 
-      .bubble {
-        max-width: 90%;
-      }
-    }
+  .main-chat {
+    width: 100%;
+  }
+
+  .topbar-actions {
+    flex-wrap: wrap;
+  }
+
+  .topbar-actions button {
+    font-size: 12px;
+    padding: 6px 8px;
+  }
+
+  .bubble {
+    max-width: 90%;
+  }
+}
   </style>
 </head>
 <body>
@@ -465,7 +479,7 @@
   </div>
 
   <div id="dashboardPage" class="page">
-    <div class="dashboard">
+    <div class="dashboard" style="width:100%; max-width:100%; overflow-x:hidden;">
       <div class="sidebar">
         <div class="sidebar-header">
           <h3>Conversations</h3>
