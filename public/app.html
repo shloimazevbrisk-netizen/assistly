@@ -1293,7 +1293,7 @@ function startEditName(email, btn, event) {
   isEditingName = true;
 
   // find the name text
-  const nameSpan = btn.parentElement.parentElement.querySelector("span");
+  const nameSpan = btn.closest("div").parentElement.querySelector("span");
 
   const currentName = nameSpan.innerText;
 
