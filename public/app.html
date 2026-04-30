@@ -1279,15 +1279,18 @@ async function saveNotificationEmail() {
 }
 
 setInterval(() => {
-  if (localStorage.getItem("companyId")) {
+  if (localStorage.getItem("companyId") && !isEditingName) {
     loadConversations();
   }
 }, 3000);
 
 let aiActive = true;
+let isEditingName = false;
 
 function startEditName(email, btn, event) {
   event.stopPropagation();
+
+  isEditingName = true;
 
   // find the name text
   const nameSpan = btn.parentElement.parentElement.querySelector("span");
@@ -1327,6 +1330,7 @@ function startEditName(email, btn, event) {
     });
 
     // reload UI
+    isEditingName = false;
     loadConversations();
   };
 
