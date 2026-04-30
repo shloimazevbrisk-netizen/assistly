@@ -424,6 +424,7 @@
       <button onclick="showPage('dashboardPage')">Dashboard</button>
       <button onclick="openLeads()">Leads</button>
       <button onclick="openSettings()">Settings</button>
+      <button onclick="openChatSettings()">Chat Settings</button>
       <button onclick="logout()">Logout</button>
     </div>
   </div>
@@ -561,9 +562,34 @@
         <button class="secondary-btn" onclick="showPage('dashboardPage')">Back</button>
       </div>
     </div>
-  </div>
+</div>
 
-  <script>
+<!-- CHAT SETTINGS PAGE -->
+<div id="chatSettingsPage" class="page" style="display:none;">
+  <div style="padding:20px;">
+    <h2>Chat Settings</h2>
+
+    <label>Greeting Message</label><br><br>
+
+    <textarea id="greetingInput"
+      style="width:100%; height:80px; padding:10px; border-radius:8px; border:1px solid #ccc;">
+    </textarea>
+
+    <br><br>
+
+    <button onclick="saveGreeting()" 
+      style="background:#4f46e5; color:white; padding:10px 16px; border:none; border-radius:8px;">
+      Save
+    </button>
+
+    <button onclick="showPage('dashboardPage')" style="margin-left:10px;">
+      Back
+    </button>
+  </div>
+</div>
+<!-- END CHAT SETTINGS PAGE -->
+
+<script>
     const API_BASE = "https://assistly-backend-hw4j.onrender.com";
 
 function getEmbedCode() {
@@ -1427,7 +1453,37 @@ async function confirmDelete() {
   `;
 }
 
-  </script>
+// ===== CHAT SETTINGS FUNCTIONS =====
+function openChatSettings() {
+  showPage("chatSettingsPage");
+  loadGreeting();
+}
+
+async function loadGreeting() {
+  const companyId = localStorage.getItem("companyId");
+
+  const res = await fetch(`${API_BASE}/get-greeting?companyId=${companyId}`);
+  const data = await res.json();
+
+  document.getElementById("greetingInput").value = data.greeting;
+}
+
+async function saveGreeting() {
+  const companyId = localStorage.getItem("companyId");
+  const greeting = document.getElementById("greetingInput").value;
+
+  await fetch(`${API_BASE}/save-greeting`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ companyId, greeting })
+  });
+
+  alert("Greeting saved!");
+}
+
+</script>
 
 <div id="deleteModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4); justify-content:center; align-items:center; z-index:9999;">
   <div style="background:white; padding:20px; border-radius:12px; width:300px; text-align:center; box-shadow:0 10px 30px rgba(0,0,0,0.2);">
