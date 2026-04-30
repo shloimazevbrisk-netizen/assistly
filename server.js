@@ -928,7 +928,6 @@ window.lastUserMessage = msg;
   document.body.appendChild(button);
   document.body.appendChild(chatBox);
  setInterval(() => {
-  if (!window.assistlyConversationId) return;
 
   let companyId = null;
 
