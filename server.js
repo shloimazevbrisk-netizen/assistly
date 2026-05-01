@@ -317,25 +317,24 @@ if (forcedReply) {
   }
 
   try {
-    const company = await CompanyData.findOne({ companyId });
-
-   await resend.emails.send({
-  from: "onboarding@resend.dev",
-  to: company?.notificationEmail,
-  subject: "🔥 New Lead from Assistly",
-  text: `
+  const result = await resend.emails.send({
+    from: "onboarding@resend.dev",
+    to: "shloimazevbrisk@gmail.com",
+    subject: "🔥 New Lead from Assistly",
+    text: `
 New lead received:
 
 Name: ${name || "Lead"}
 Email: ${emailMatch[0]}
 Message: ${message}
-  `
-});
+    `
+  });
 
-    console.log("EMAIL SENT (forcedReply)");
-  } catch (err) {
-    console.error("EMAIL ERROR:", err);
-  }
+  console.log("RESEND SUCCESS:", result);
+
+} catch (err) {
+  console.error("RESEND FAILED:", err);
+}
 }
 
 return res.json({
