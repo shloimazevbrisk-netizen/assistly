@@ -340,6 +340,7 @@ return res.json({
   reply: forcedReply,
   conversationId: finalConversationId
 });
+}
 
 const normalize = (text) =>
   text.toLowerCase().replace(/[^\w\s]/gi, "").trim();
@@ -531,9 +532,9 @@ Message: ${message}
 } catch (err) {
   console.error("EMAIL ERROR:", err);
 }
-  }
 }
-    
+}
+} 
 
     res.json({
   reply: answer,
