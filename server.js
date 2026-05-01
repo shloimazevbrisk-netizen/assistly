@@ -317,20 +317,26 @@ if (forcedReply) {
   }
 
   try {
-  const result = await resend.emails.send({
-    from: "Assistly <notifications@assistlychat.com>",
-    to: "assistly.notifications@gmail.com",
-    subject: "🔥 New Lead from Assistly",
-    text: `
+  const company = await CompanyData.findOne({ companyId });
+
+  if (company?.notificationEmail) {
+    const result = await resend.emails.send({
+      from: "Assistly <notifications@assistlychat.com>",
+      to: company.notificationEmail,
+      subject: "🔥 New Lead from Assistly",
+      text: `
 New lead received:
 
 Name: ${name || "Lead"}
 Email: ${emailMatch[0]}
 Message: ${message}
-    `
-  });
+      `
+    });
 
-  console.log("RESEND SUCCESS:", result);
+    console.log("RESEND SUCCESS:", result);
+  } else {
+    console.log("NO NOTIFICATION EMAIL SET");
+  }
 
 } catch (err) {
   console.error("RESEND FAILED:", err);
