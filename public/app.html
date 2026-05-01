@@ -565,26 +565,19 @@
 </div>
 
 <!-- CHAT SETTINGS PAGE -->
-<div id="chatSettingsPage" class="page" style="display:none;">
-  <div style="padding:20px;">
-    <h2>Chat Settings</h2>
+<div id="chatSettingsPage" class="page">
+  <div class="panel-wrap">
+    <div class="panel-card">
+      <h2>Chat Settings</h2>
 
-    <label>Greeting Message</label><br><br>
+      <div class="form-group">
+        <label>Greeting Message</label>
+        <textarea id="greetingInput" placeholder="Hi, How can I help you today?"></textarea>
+      </div>
 
-    <textarea id="greetingInput"
-      style="width:100%; height:80px; padding:10px; border-radius:8px; border:1px solid #ccc;">
-    </textarea>
-
-    <br><br>
-
-    <button onclick="saveGreeting()" 
-      style="background:#4f46e5; color:white; padding:10px 16px; border:none; border-radius:8px;">
-      Save
-    </button>
-
-    <button onclick="showPage('dashboardPage')" style="margin-left:10px;">
-      Back
-    </button>
+      <button class="primary-btn" onclick="saveGreeting()">Save</button>
+      <button class="secondary-btn" onclick="showPage('dashboardPage')">Back</button>
+    </div>
   </div>
 </div>
 <!-- END CHAT SETTINGS PAGE -->
