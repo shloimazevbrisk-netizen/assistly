@@ -181,14 +181,21 @@ const emailMatch = message.match(/[^\s]+@[^\s]+\.[^\s]+/);
 const phoneMatch = message.match(/(\+?\d{7,15})/);
 
   let name = null;
-  const nameMatch = message.match(/(?:my name is|i am|this is)\s+([a-zA-Z]+)/i);
 
- if (nameMatch) {
+const nameMatch = message.match(/(?:my name is|i am|this is)\s+([a-zA-Z]+)/i);
+
+if (nameMatch) {
   name = nameMatch[1];
 }
 
+// fallback if no name but email exists
 if (!name && emailMatch) {
   name = "Lead";
+}
+
+// final cleanup (VERY IMPORTANT)
+if (name) {
+  name = name.replace(/[^a-zA-Z]/g, "");
 }
 
 function getRelevantContext(text, query) {
@@ -312,27 +319,27 @@ if (forcedReply) {
       time: new Date().toISOString(),
       isUnread: true
     });
+  }
 
-    try {
-      const company = await CompanyData.findOne({ companyId });
+  try {
+    const company = await CompanyData.findOne({ companyId });
 
-      await transporter.sendMail({
-        from: process.env.EMAIL_USER,
-        to: company?.notificationEmail || process.env.EMAIL_USER,
-        subject: "🔥 New Lead from Assistly",
-        text: `
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: company?.notificationEmail || process.env.EMAIL_USER,
+      subject: "🔥 New Lead from Assistly",
+      text: `
 New lead received:
 
-Name: ${name}
+Name: ${name || "Lead"}
 Email: ${email}
 Message: ${message}
-        `
-      });
+      `
+    });
 
-      console.log("EMAIL SENT (forcedReply)");
-    } catch (err) {
-      console.error("EMAIL ERROR:", err);
-    }
+    console.log("EMAIL SENT (forcedReply)");
+  } catch (err) {
+    console.error("EMAIL ERROR:", err);
   }
 }
 
