@@ -22,6 +22,7 @@
     "multer": "^2.1.1",
     "nodemailer": "^8.0.6",
     "openai": "^6.34.0",
-    "pdf-parse": "^1.1.4"
+    "pdf-parse": "^1.1.4",
+    "resend": "^6.12.2"
   }
 }

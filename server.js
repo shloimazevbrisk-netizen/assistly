@@ -13,17 +13,10 @@ const axios = require("axios");
 const cheerio = require("cheerio");
 const https = require("https");
 const mongoose = require("mongoose");
-const nodemailer = require("nodemailer");
+const { Resend } = require("resend");
+const resend = new Resend(process.env.RESEND_API_KEY);
 
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
-  }
-});
+
 
 const app = express();
 
@@ -326,18 +319,18 @@ if (forcedReply) {
   try {
     const company = await CompanyData.findOne({ companyId });
 
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: company?.notificationEmail || process.env.EMAIL_USER,
-      subject: "🔥 New Lead from Assistly",
-      text: `
+   await resend.emails.send({
+  from: "onboarding@resend.dev",
+  to: company?.notificationEmail || process.env.EMAIL_USER,
+  subject: "🔥 New Lead from Assistly",
+  text: `
 New lead received:
 
 Name: ${name || "Lead"}
 Email: ${email}
 Message: ${message}
-      `
-    });
+  `
+});
 
     console.log("EMAIL SENT (forcedReply)");
   } catch (err) {
@@ -524,18 +517,18 @@ await Conversation.create({
 try {
   const company = await CompanyData.findOne({ companyId });
 
-  await transporter.sendMail({
-    from: process.env.EMAIL_USER,
-    to: company?.notificationEmail || process.env.EMAIL_USER,
-    subject: "🔥 New Lead from Assistly",
-    text: `
+ await resend.emails.send({
+  from: "onboarding@resend.dev",
+  to: company?.notificationEmail || process.env.EMAIL_USER,
+  subject: "🔥 New Lead from Assistly",
+  text: `
 New lead received:
 
-Name: ${name}
-Email: ${emailMatch[0]}
+Name: ${name || "Lead"}
+Email: ${email}
 Message: ${message}
-    `
-  });
+  `
+});
 
   console.log("EMAIL SENT");
 } catch (err) {
