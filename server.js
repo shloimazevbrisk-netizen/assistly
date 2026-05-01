@@ -327,7 +327,7 @@ if (forcedReply) {
 New lead received:
 
 Name: ${name || "Lead"}
-Email: ${email}
+Email: ${emailMatch[0]}
 Message: ${message}
   `
 });
@@ -525,7 +525,7 @@ try {
 New lead received:
 
 Name: ${name || "Lead"}
-Email: ${email}
+Email: ${emailMatch[0]}
 Message: ${message}
   `
 });
