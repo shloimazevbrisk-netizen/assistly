@@ -284,17 +284,6 @@ if (isOffTopic) {
 if (forcedReply) {
   let finalConversationId = conversationId || Date.now().toString();
 
-  // 🔥 SAVE LEAD BEFORE RETURN
-  if (emailMatch) {
-    await Lead.create({
-      companyId,
-      name,
-      email: emailMatch[0].toLowerCase(),
-      time: new Date().toISOString(),
-      isUnread: true
-    });
-  }
-
   await Conversation.create({
     companyId,
     conversationId: finalConversationId,
@@ -307,11 +296,50 @@ if (forcedReply) {
     aiActive: true
   });
 
-  return res.json({
-    reply: forcedReply,
-    conversationId: finalConversationId
+  if (emailMatch) {
+  const email = emailMatch[0].toLowerCase();
+
+  const existingLead = await Lead.findOne({
+    companyId,
+    email
   });
+
+  if (!existingLead) {
+    await Lead.create({
+      companyId,
+      name,
+      email,
+      time: new Date().toISOString(),
+      isUnread: true
+    });
+
+    try {
+      const company = await CompanyData.findOne({ companyId });
+
+      await transporter.sendMail({
+        from: process.env.EMAIL_USER,
+        to: company?.notificationEmail || process.env.EMAIL_USER,
+        subject: "🔥 New Lead from Assistly",
+        text: `
+New lead received:
+
+Name: ${name}
+Email: ${email}
+Message: ${message}
+        `
+      });
+
+      console.log("EMAIL SENT (forcedReply)");
+    } catch (err) {
+      console.error("EMAIL ERROR:", err);
+    }
+  }
 }
+
+return res.json({
+  reply: forcedReply,
+  conversationId: finalConversationId
+});
 
 const normalize = (text) =>
   text.toLowerCase().replace(/[^\w\s]/gi, "").trim();
