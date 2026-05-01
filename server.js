@@ -534,7 +534,7 @@ Message: ${message}
 }
 }
 }
-} 
+
 
     res.json({
   reply: answer,
