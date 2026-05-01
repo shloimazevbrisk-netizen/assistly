@@ -318,8 +318,8 @@ if (forcedReply) {
 
   try {
   const result = await resend.emails.send({
-    from: "onboarding@resend.dev",
-    to: "shloimazevbrisk@gmail.com",
+    from: "Assistly <notifications@assistlychat.com>",
+    to: "assistly.notifications@gmail.com",
     subject: "🔥 New Lead from Assistly",
     text: `
 New lead received:
