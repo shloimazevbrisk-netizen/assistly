@@ -321,7 +321,7 @@ if (forcedReply) {
 
    await resend.emails.send({
   from: "onboarding@resend.dev",
-  to: company?.notificationEmail || process.env.EMAIL_USER,
+  to: company?.notificationEmail,
   subject: "🔥 New Lead from Assistly",
   text: `
 New lead received:
@@ -497,45 +497,6 @@ await Conversation.create({
   isUnread: true,
   aiActive: true
 });
-
-
-     if (emailMatch) {
-  const existingLead = await Lead.findOne({
-    companyId,
-    email: emailMatch[0].toLowerCase()
-  });
-
-  if (!existingLead) {
-    await Lead.create({
-  companyId,
-  name,
-  email: emailMatch[0].toLowerCase(),
-  time: new Date().toISOString(),
-  isUnread: true
-});
-
-try {
-  const company = await CompanyData.findOne({ companyId });
-
- await resend.emails.send({
-  from: "onboarding@resend.dev",
-  to: company?.notificationEmail || process.env.EMAIL_USER,
-  subject: "🔥 New Lead from Assistly",
-  text: `
-New lead received:
-
-Name: ${name || "Lead"}
-Email: ${emailMatch[0]}
-Message: ${message}
-  `
-});
-
-  console.log("EMAIL SENT");
-} catch (err) {
-  console.error("EMAIL ERROR:", err);
-}
-}
-}
 
 
     res.json({
