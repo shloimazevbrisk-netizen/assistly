@@ -49,37 +49,49 @@
   <button onclick="loginAdmin()">Login</button>
 </div>
 
-<h2>Clients</h2>
-
-<div id="list"></div>
+<div id="adminContent" style="display:none;">
+  <h2>Clients</h2>
+  <div id="list"></div>
+</div>
 
 <script>
-fetch("/admin/clients", {
-  headers: {
-    "x-admin-key": localStorage.getItem("adminKey")
-  }
-})
-  .then(res => res.json())
-  .then(data => {
-    const list = document.getElementById("list");
+const adminKey = localStorage.getItem("adminKey");
 
-    data.forEach(c => {
-      const div = document.createElement("div");
-      div.className = "card";
+if (adminKey) {
+  fetch("/admin/clients", {
+    headers: {
+      "x-admin-key": adminKey
+    }
+  })
+    .then(res => {
+      if (!res.ok) throw new Error("Unauthorized");
+      return res.json();
+    })
+    .then(data => {
+      document.getElementById("adminContent").style.display = "block";
 
-      div.innerHTML = `
-        <div class="left">
-  <strong>${c.clientId}</strong><br>
-  ${c.companyName}<br>
-  ${c.email || "No email"}<br>
-  ${getTrialText(c.trialEndsAt)}
-</div>
-      `;
+      const list = document.getElementById("list");
 
-      list.appendChild(div);
+      data.forEach(c => {
+        const div = document.createElement("div");
+        div.className = "card";
+
+        div.innerHTML = `
+          <div class="left">
+            <strong>${c.clientId}</strong><br>
+            ${c.companyName}<br>
+            ${c.email || "No email"}<br>
+            ${getTrialText(c.trialEndsAt)}
+          </div>
+        `;
+
+        list.appendChild(div);
+      });
+    })
+    .catch(() => {
+      localStorage.removeItem("adminKey");
     });
-  });
-
+}
 function login(companyId) {
   localStorage.setItem("companyId", companyId);
   window.location.href = "/";
