@@ -44,12 +44,21 @@
 </head>
 <body>
 
+<div id="loginBox" style="margin-bottom:20px;">
+  <input type="password" id="adminKeyInput" placeholder="Enter admin key">
+  <button onclick="loginAdmin()">Login</button>
+</div>
+
 <h2>Clients</h2>
 
 <div id="list"></div>
 
 <script>
-fetch("/admin/clients")
+fetch("/admin/clients", {
+  headers: {
+    "x-admin-key": localStorage.getItem("adminKey")
+  }
+})
   .then(res => res.json())
   .then(data => {
     const list = document.getElementById("list");
@@ -86,6 +95,12 @@ function getTrialText(trialEndsAt) {
 
   if (diff <= 0) return "Trial expired";
   return diff + " days left";
+}
+
+function loginAdmin() {
+  const key = document.getElementById("adminKeyInput").value;
+  localStorage.setItem("adminKey", key);
+  location.reload();
 }
 
 </script>
