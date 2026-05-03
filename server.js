@@ -133,7 +133,15 @@ app.post("/signup", async (req, res) => {
   res.json({ success: true, companyId, companyName });
 });
 
-app.post("/admin/signup", async (req, res) => {
+app.post("/admin/signup", (req, res, next) => {
+  const adminKey = req.headers["x-admin-key"];
+
+  if (adminKey !== process.env.ADMIN_KEY) {
+    return res.status(403).json({ message: "Unauthorized" });
+  }
+
+  next();
+}, async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
