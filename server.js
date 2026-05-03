@@ -62,6 +62,11 @@ const Lead = mongoose.model("Lead", {
   isUnread: Boolean
 });
 
+const Admin = mongoose.model("Admin", {
+  email: String,
+  passwordHash: String
+});
+
 const upload = multer({ dest: "uploads/" });
 
 app.use(cors());
@@ -126,6 +131,29 @@ app.post("/signup", async (req, res) => {
   });
 
   res.json({ success: true, companyId, companyName });
+});
+
+app.post("/admin/signup", async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({ message: "Missing email or password" });
+  }
+
+  const existing = await Admin.findOne({ email });
+
+  if (existing) {
+    return res.status(400).json({ message: "Admin already exists" });
+  }
+
+  const passwordHash = await bcrypt.hash(password, 10);
+
+  await Admin.create({
+    email,
+    passwordHash
+  });
+
+  res.json({ success: true });
 });
 
 app.post("/login", async (req, res) => {
