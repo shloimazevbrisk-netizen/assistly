@@ -183,10 +183,11 @@ app.post("/admin/login", async (req, res) => {
     return res.status(401).json({ message: "Invalid login" });
   }
 
-  res.json({
-    success: true,
-    email: admin.email
-  });
+  req.session.adminEmail = admin.email;
+
+res.json({
+  success: true
+});
 });
 
 app.post("/login", async (req, res) => {
@@ -1105,15 +1106,11 @@ messagesDiv.scrollTop = messagesDiv.scrollHeight;
 `);
 });
 
-app.get("/admin/clients", (req, res, next) => {
-  const adminKey = req.headers["x-admin-key"];
-
-  if (adminKey !== process.env.ADMIN_KEY) {
+app.get("/admin/clients", async (req, res) => {
+  if (!req.session.adminEmail) {
     return res.status(403).json({ message: "Unauthorized" });
   }
 
-  next();
-}, async (req, res) => {
   try {
     const companies = await mongoose.connection
       .collection("companies")
