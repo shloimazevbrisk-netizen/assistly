@@ -1044,6 +1044,36 @@ messagesDiv.scrollTop = messagesDiv.scrollHeight;
 `);
 });
 
+app.get("/admin/clients", async (req, res) => {
+  try {
+    const companies = await mongoose.connection
+      .collection("companies")
+      .find({})
+      .toArray();
+
+    const companyData = await CompanyData.find({});
+
+    const merged = companies.map((c, index) => {
+      const extra = companyData.find(d => d.companyId === c.companyId);
+
+      return {
+        clientId: `client${index + 1}`,
+        companyId: c.companyId,
+        companyName: c.companyName,
+        email: extra?.notificationEmail || "",
+        trialEndsAt: extra?.trialEndsAt || null,
+        isPaid: extra?.isPaid || false,
+        createdAt: c.createdAt
+      };
+    });
+
+    res.json(merged);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "error loading clients" });
+  }
+});
+
 app.post("/toggle-ai", async (req, res) => {
   const { companyId, conversationId, aiActive } = req.body;
 

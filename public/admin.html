@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin - Clients</title>
+</head>
+<body>
+
+<h2>Clients</h2>
+
+<ul id="list"></ul>
+
+<script>
+fetch("/admin/clients")
+  .then(res => res.json())
+  .then(data => {
+    const list = document.getElementById("list");
+
+    data.forEach(c => {
+      const li = document.createElement("li");
+
+      li.innerText =
+        c.clientId + " | " +
+        c.companyName + " | " +
+        (c.email || "no email");
+
+      list.appendChild(li);
+    });
+  });
+</script>
+
+</body>
+</html>
