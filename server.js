@@ -164,6 +164,31 @@ app.post("/admin/signup", (req, res, next) => {
   res.json({ success: true });
 });
 
+app.post("/admin/login", async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({ message: "Missing email or password" });
+  }
+
+  const admin = await Admin.findOne({ email });
+
+  if (!admin) {
+    return res.status(401).json({ message: "Invalid login" });
+  }
+
+  const passwordOk = await bcrypt.compare(password, admin.passwordHash);
+
+  if (!passwordOk) {
+    return res.status(401).json({ message: "Invalid login" });
+  }
+
+  res.json({
+    success: true,
+    email: admin.email
+  });
+});
+
 app.post("/login", async (req, res) => {
   const { companyName, password } = req.body;
 
