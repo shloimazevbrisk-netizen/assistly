@@ -45,7 +45,8 @@
 <body>
 
 <div id="loginBox" style="margin-bottom:20px;">
-  <input type="password" id="adminKeyInput" placeholder="Enter admin key">
+  <input type="email" id="adminEmail" placeholder="Email"><br><br>
+  <input type="password" id="adminPassword" placeholder="Password"><br><br>
   <button onclick="loginAdmin()">Login</button>
 </div>
 
@@ -55,7 +56,7 @@
 </div>
 
 <script>
-const adminKey = localStorage.getItem("adminKey");
+const adminKey = localStorage.getItem("adminLoggedIn");
 
 if (adminKey) {
   fetch("/admin/clients", {
@@ -110,11 +111,26 @@ function getTrialText(trialEndsAt) {
 }
 
 function loginAdmin() {
-  const key = document.getElementById("adminKeyInput").value;
-  localStorage.setItem("adminKey", key);
-  location.reload();
-}
+  const email = document.getElementById("adminEmail").value;
+  const password = document.getElementById("adminPassword").value;
 
+  fetch("/admin/login", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ email, password })
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        localStorage.setItem("adminLoggedIn", "true");
+        location.reload();
+      } else {
+        alert("Invalid login");
+      }
+    });
+}
 </script>
 
 </body>
