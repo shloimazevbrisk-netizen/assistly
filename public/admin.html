@@ -60,13 +60,11 @@ fetch("/admin/clients")
 
       div.innerHTML = `
         <div class="left">
-          <strong>${c.clientId}</strong><br>
-          ${c.companyName}<br>
-          ${c.email || "No email"}
-        </div>
-        <div class="right">
-          <button onclick="login('${c.companyId}')">Login</button>
-        </div>
+  <strong>${c.clientId}</strong><br>
+  ${c.companyName}<br>
+  ${c.email || "No email"}<br>
+  ${getTrialText(c.trialEndsAt)}
+</div>
       `;
 
       list.appendChild(div);
@@ -77,6 +75,19 @@ function login(companyId) {
   localStorage.setItem("companyId", companyId);
   window.location.href = "/";
 }
+
+function getTrialText(trialEndsAt) {
+  if (!trialEndsAt) return "No trial set";
+
+  const now = new Date();
+  const end = new Date(trialEndsAt);
+
+  const diff = Math.ceil((end - now) / (1000 * 60 * 60 * 24));
+
+  if (diff <= 0) return "Trial expired";
+  return diff + " days left";
+}
+
 </script>
 
 </body>
