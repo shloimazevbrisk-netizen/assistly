@@ -1044,7 +1044,15 @@ messagesDiv.scrollTop = messagesDiv.scrollHeight;
 `);
 });
 
-app.get("/admin/clients", async (req, res) => {
+app.get("/admin/clients", (req, res, next) => {
+  const adminKey = req.headers["x-admin-key"];
+
+  if (adminKey !== process.env.ADMIN_KEY) {
+    return res.status(403).json({ message: "Unauthorized" });
+  }
+
+  next();
+}, async (req, res) => {
   try {
     const companies = await mongoose.connection
       .collection("companies")
