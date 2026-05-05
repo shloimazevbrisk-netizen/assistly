@@ -56,43 +56,39 @@
 </div>
 
 <script>
-const adminKey = localStorage.getItem("adminLoggedIn");
-
-if (adminKey) {
-  fetch("/admin/clients", {
-    headers: {
-      "x-admin-key": adminKey
-    }
+fetch("/admin/clients")
+  .then(res => {
+    if (!res.ok) throw new Error("Unauthorized");
+    return res.json();
   })
-    .then(res => {
-      if (!res.ok) throw new Error("Unauthorized");
-      return res.json();
-    })
-    .then(data => {
-      document.getElementById("adminContent").style.display = "block";
+  .then(data => {
+    document.getElementById("loginBox").style.display = "none";
+    document.getElementById("adminContent").style.display = "block";
 
-      const list = document.getElementById("list");
+    const list = document.getElementById("list");
+    list.innerHTML = "";
 
-      data.forEach(c => {
-        const div = document.createElement("div");
-        div.className = "card";
+    data.forEach(c => {
+      const div = document.createElement("div");
+      div.className = "card";
 
-        div.innerHTML = `
-          <div class="left">
-            <strong>${c.clientId}</strong><br>
-            ${c.companyName}<br>
-            ${c.email || "No email"}<br>
-            ${getTrialText(c.trialEndsAt)}
-          </div>
-        `;
+      div.innerHTML = `
+        <div class="left">
+          <strong>${c.clientId}</strong><br>
+          ${c.companyName}<br>
+          ${c.email || "No email"}<br>
+          ${getTrialText(c.trialEndsAt)}
+        </div>
+      `;
 
-        list.appendChild(div);
-      });
-    })
-    .catch(() => {
-      localStorage.removeItem("adminKey");
+      list.appendChild(div);
     });
-}
+  })
+  .catch(() => {
+    document.getElementById("loginBox").style.display = "block";
+    document.getElementById("adminContent").style.display = "none";
+  });
+
 function login(companyId) {
   localStorage.setItem("companyId", companyId);
   window.location.href = "/";
@@ -124,7 +120,6 @@ function loginAdmin() {
     .then(res => res.json())
     .then(data => {
       if (data.success) {
-        localStorage.setItem("adminLoggedIn", "true");
         location.reload();
       } else {
         alert("Invalid login");
